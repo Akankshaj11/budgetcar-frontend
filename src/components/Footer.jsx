@@ -55,7 +55,7 @@ const Footer = () => {
                     <ul className="space-y-4 text-md">
                         <li className="flex gap-3"><FaMapMarkerAlt className="mt-1 shrink-0" /> Sr.No 30, Pune Nagar Rd, opp. Canara Bank, Viman Nagar, Pune 411014</li>
                         <li className="flex gap-3"><FaPhone className="mt-1 shrink-0" /> +91 99228 01959</li>
-                        <li className="flex gap-3"><FaWhatsapp className="mt-1 shrink-0" /> WhatsApp: wa.me</li>
+                        <li className="flex gap-3"><FaWhatsapp className="mt-1 shrink-0" /> WhatsApp: <a href="https://wa.me/919922801959" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors underline">wa.me</a></li>
                         <li className="flex gap-3"><FaEnvelope className="mt-1 shrink-0" /> budgetcar.pune@gmail.com</li>
                         <li className="flex gap-3"><FaClock className="mt-1 shrink-0" /> Mon–Sat: 10 AM – 8 PM | Sun: 10 AM – 6 PM</li>
                     </ul>

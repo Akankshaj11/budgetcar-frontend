@@ -18,9 +18,10 @@ import { FaArrowRight, FaSearch } from "react-icons/fa";
 
 // Array of brand logos for the strip
 const brandLogos = [
-    "/logos/tata.png", "/logos/toyota.png", "/logos/mahindra.png", 
-    "/logos/kia.png", "/logos/hyundai.png", "/logos/skoda.png", 
-    "/logos/maruti.png", "/logos/honda.png"
+    "/logos/tata.svg", "/logos/toyota.svg", "/logos/mahindra.svg", 
+    "/logos/kia.svg", "/logos/hyundai.svg", "/logos/skoda.svg", 
+    "/logos/marutisuzuki.svg", "/logos/honda.svg", "/logos/ford.svg",
+    "/logos/mg.svg", "/logos/renault.svg", "/logos/volkswagen.svg"
 ];
 
 const Home = () => {
@@ -53,11 +54,17 @@ const Home = () => {
                     </p>
 
                     <div className="mt-8 flex gap-4">
-                        <button className="flex items-center gap-3 rounded-2xl bg-[#232323] px-8 py-4 text-white font-semibold hover:bg-[#2d2d2d] transition">
+                        <button 
+                            onClick={() => document.getElementById("inventory")?.scrollIntoView({ behavior: "smooth" })}
+                            className="flex items-center gap-3 rounded-2xl bg-[#232323] px-8 py-4 text-white font-semibold hover:bg-[#2d2d2d] transition cursor-pointer"
+                        >
                             <FaSearch />
                             Browse Cars
                         </button>
-                        <button className="flex items-center gap-3 rounded-2xl border border-gray-600 bg-white/10 backdrop-blur-md px-8 py-4 text-white font-semibold hover:bg-white/20 transition">
+                        <button 
+                            onClick={() => document.getElementById("sell")?.scrollIntoView({ behavior: "smooth" })}
+                            className="flex items-center gap-3 rounded-2xl border border-gray-600 bg-white/10 backdrop-blur-md px-8 py-4 text-white font-semibold hover:bg-white/20 transition cursor-pointer"
+                        >
                             <FaArrowRight />
                             Sell Your Car
                         </button>
@@ -70,12 +77,12 @@ const Home = () => {
                         <div className="flex animate-marquee whitespace-nowrap">
                             <div className="flex items-center gap-16 px-8 shrink-0">
                                 {brandLogos.map((logo, index) => (
-                                    <img key={`set1-${index}`} src={logo} alt="Brand" className="h-6 w-auto opacity-70" />
+                                    <img key={`set1-${index}`} src={logo} alt="Brand" className="h-6 w-auto opacity-60 grayscale invert" />
                                 ))}
                             </div>
                             <div className="flex items-center gap-16 px-8 shrink-0">
                                 {brandLogos.map((logo, index) => (
-                                    <img key={`set2-${index}`} src={logo} alt="Brand" className="h-6 w-auto opacity-70" />
+                                    <img key={`set2-${index}`} src={logo} alt="Brand" className="h-6 w-auto opacity-60 grayscale invert" />
                                 ))}
                             </div>
                         </div>

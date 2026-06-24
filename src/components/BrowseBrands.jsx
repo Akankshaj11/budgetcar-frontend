@@ -1,21 +1,31 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const brands = [
-  { name: "Maruti Suzuki", logo: "/brands/maruti.png" },
-  { name: "Hyundai", logo: "/brands/hyundai.png" },
-  { name: "Tata Motors", logo: "/brands/tata.png" },
-  { name: "Honda", logo: "/brands/honda.png" },
-  { name: "Toyota", logo: "/brands/toyota.png" },
-  { name: "Mahindra", logo: "/brands/mahindra.png" },
-  { name: "Kia", logo: "/brands/kia.png" },
-  { name: "Volkswagen", logo: "/brands/volkswagen.png" },
-  { name: "Ford", logo: "/brands/ford.png" },
-  { name: "Renault", logo: "/brands/renault.png" },
-  { name: "MG Motor", logo: "/brands/mg.png" },
-  { name: "Skoda", logo: "/brands/skoda.png" },
+  { name: "Maruti Suzuki", logo: "/logos/marutisuzuki.svg" },
+  { name: "Hyundai", logo: "/logos/hyundai.svg" },
+  { name: "Tata Motors", logo: "/logos/tata.svg" },
+  { name: "Honda", logo: "/logos/honda.svg" },
+  { name: "Toyota", logo: "/logos/toyota.svg" },
+  { name: "Mahindra", logo: "/logos/mahindra.svg" },
+  { name: "Kia", logo: "/logos/kia.svg" },
+  { name: "Volkswagen", logo: "/logos/volkswagen.svg" },
+  { name: "Ford", logo: "/logos/ford.svg" },
+  { name: "Renault", logo: "/logos/renault.svg" },
+  { name: "MG Motor", logo: "/logos/mg.svg" },
+  { name: "Skoda", logo: "/logos/skoda.svg" },
 ];
 
 const BrowseBrands = () => {
+  const navigate = useNavigate();
+
+  const handleBrandClick = (name) => {
+    let cleanName = name;
+    if (name === "Tata Motors") cleanName = "Tata";
+    if (name === "MG Motor") cleanName = "MG";
+    navigate(`/all-cars?brand=${encodeURIComponent(cleanName)}`);
+  };
+
   return (
     <section className="bg-white py-24">
 
@@ -48,15 +58,16 @@ const BrowseBrands = () => {
 
             <div
               key={brand.name}
-              className="group cursor-pointer rounded-3xl border border-gray-200 bg-[#fafafa] p-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+              onClick={() => handleBrandClick(brand.name)}
+              className="group cursor-pointer rounded-3xl border border-gray-200 bg-[#fafafa] p-5 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl flex flex-col justify-between"
             >
 
-              <div className="flex items-center justify-center h-15 rounded-2xl bg-white border border-gray-200 shadow-sm">
+              <div className="flex items-center justify-center h-15 rounded-2xl bg-white border border-gray-200 shadow-sm overflow-hidden">
 
                 <img
                   src={brand.logo}
                   alt={brand.name}
-                  className="h-10 object-contain transition duration-300 group-hover:scale-110"
+                  className="h-9 object-contain transition duration-300 group-hover:scale-110 grayscale contrast-150"
                 />
 
               </div>

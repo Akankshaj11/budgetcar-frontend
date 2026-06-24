@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   FaCarSide,
   FaPhoneAlt,
@@ -9,8 +10,54 @@ import {
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const links = ["Home", "About", "Inventory", "Sell", "Contact"];
+
+  const handleLinkClick = (item) => {
+    setOpen(false);
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        if (item === "Home") {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          const element = document.getElementById(item.toLowerCase());
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth" });
+          }
+        }
+      }, 150);
+    } else {
+      if (item === "Home") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        const element = document.getElementById(item.toLowerCase());
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }
+  };
+
+  const handleBookTestDrive = () => {
+    setOpen(false);
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        const element = document.getElementById("contact");
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 150);
+    } else {
+      const element = document.getElementById("contact");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,7 +97,7 @@ const Navbar = () => {
 
               <div>
                 <h2
-                  className={`text-lg font-semibold leading-none transition-colors duration-300 ${
+                  className={`text-2xl font-semibold leading-none transition-colors duration-300 ${
                     scrolled ? "text-gray-900" : "text-white"
                   }`}
                 >
@@ -73,6 +120,7 @@ const Navbar = () => {
               {links.map((item) => (
                 <li
                   key={item}
+                  onClick={() => handleLinkClick(item)}
                   className={`relative font-medium cursor-pointer transition-colors duration-300 group ${
                     scrolled ? "text-gray-900" : "text-white"
                   }`}
@@ -92,7 +140,8 @@ const Navbar = () => {
 
             <div className="hidden lg:flex items-center gap-6">
 
-              <button
+              <a
+                href="tel:+919922801959"
                 className={`text-xl animate-phone transition-colors duration-300 ${
                   scrolled
                     ? "text-gray-900 hover:text-gray-600"
@@ -100,10 +149,11 @@ const Navbar = () => {
                 }`}
               >
                 <FaPhoneAlt />
-              </button>
+              </a>
 
               <button
-                className={`px-7 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 ${
+                onClick={handleBookTestDrive}
+                className={`px-7 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 cursor-pointer ${
                   scrolled
                     ? "bg-gray-900 text-white hover:bg-black"
                     : "bg-white text-gray-900 hover:bg-gray-200"
@@ -147,13 +197,17 @@ const Navbar = () => {
           {links.map((item) => (
             <li
               key={item}
+              onClick={() => handleLinkClick(item)}
               className="text-lg font-medium text-gray-900 cursor-pointer hover:text-gray-600"
             >
               {item}
             </li>
           ))}
 
-          <button className="mt-6 bg-gray-900 text-white rounded-xl py-3 font-semibold">
+          <button 
+            onClick={handleBookTestDrive}
+            className="mt-6 bg-gray-900 text-white rounded-xl py-3 font-semibold cursor-pointer"
+          >
             Book Test Drive
           </button>
         </ul>

@@ -31,7 +31,7 @@ const stats = [
 const About = () => {
   return (
     // <section className="bg-[#f7f7f7] py-20">
-    <section className="bg-[#f7f7f7] py-20 min-h-65 flex items-center">
+    <section id="about" className="bg-[#f7f7f7] py-20 min-h-65 flex items-center">
 
       <div className="max-w-7xl mx-auto px-6">
 

@@ -7,21 +7,24 @@ import {
     FaRoad,
     FaCog,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { cars } from "../data/cars";
 
-const cars = [
-    { id: 1, badge: "HOT DEAL", color: "bg-orange-500", image: "/cars/swift.jpg", name: "Maruti Suzuki Swift", price: "₹4,85,000", year: "2021", kms: "32,000 km", fuel: "Petrol", transmission: "Manual" },
-    { id: 2, badge: "CERTIFIED", color: "bg-green-600", image: "/cars/city.jpg", name: "Honda City 4th Gen", price: "₹8,20,000", year: "2020", kms: "48,000 km", fuel: "Petrol", transmission: "CVT" },
-    { id: 3, badge: "LOW KMS", color: "bg-slate-800", image: "/cars/creta.jpg", name: "Hyundai Creta", price: "₹12,50,000", year: "2022", kms: "18,500 km", fuel: "Diesel", transmission: "Automatic" },
-    { id: 4, badge: "PREMIUM", color: "bg-purple-600", image: "/cars/fortuner.jpg", name: "Toyota Fortuner", price: "₹24,90,000", year: "2021", kms: "55,000 km", fuel: "Diesel", transmission: "Automatic" },
-    { id: 5, badge: "EV", color: "bg-cyan-600", image: "/cars/nexon.jpg", name: "Tata Nexon EV", price: "₹13,80,000", year: "2023", kms: "11,000 km", fuel: "Electric", transmission: "Automatic" },
-    { id: 6, badge: "LIKE NEW", color: "bg-pink-600", image: "/cars/thar.jpg", name: "Mahindra Thar", price: "₹15,90,000", year: "2023", kms: "9,000 km", fuel: "Diesel", transmission: "Manual" },
-    { id: 7, badge: "FUN DRIVE", color: "bg-slate-700", image: "/cars/verna.jpg", name: "Hyundai Verna", price: "₹10,80,000", year: "2022", kms: "22,000 km", fuel: "Petrol", transmission: "Automatic" },
-    { id: 8, badge: "TOP RATED", color: "bg-orange-600", image: "/cars/brezza.jpg", name: "Maruti Brezza", price: "₹9,45,000", year: "2022", kms: "28,000 km", fuel: "Petrol", transmission: "Manual" },
-];
+// const cars = [
+//     { id: 1, badge: "HOT DEAL", color: "bg-orange-500", image: "/cars/swift.jpg", name: "Maruti Suzuki Swift", price: "₹4,85,000", year: "2021", kms: "32,000 km", fuel: "Petrol", transmission: "Manual" },
+//     { id: 2, badge: "CERTIFIED", color: "bg-green-600", image: "/cars/city.jpg", name: "Honda City 4th Gen", price: "₹8,20,000", year: "2020", kms: "48,000 km", fuel: "Petrol", transmission: "CVT" },
+//     { id: 3, badge: "LOW KMS", color: "bg-slate-800", image: "/cars/creta.jpg", name: "Hyundai Creta", price: "₹12,50,000", year: "2022", kms: "18,500 km", fuel: "Diesel", transmission: "Automatic" },
+//     { id: 4, badge: "PREMIUM", color: "bg-purple-600", image: "/cars/fortuner.jpg", name: "Toyota Fortuner", price: "₹24,90,000", year: "2021", kms: "55,000 km", fuel: "Diesel", transmission: "Automatic" },
+//     { id: 5, badge: "EV", color: "bg-cyan-600", image: "/cars/nexon.jpg", name: "Tata Nexon EV", price: "₹13,80,000", year: "2023", kms: "11,000 km", fuel: "Electric", transmission: "Automatic" },
+//     { id: 6, badge: "LIKE NEW", color: "bg-pink-600", image: "/cars/thar.jpg", name: "Mahindra Thar", price: "₹15,90,000", year: "2023", kms: "9,000 km", fuel: "Diesel", transmission: "Manual" },
+//     { id: 7, badge: "FUN DRIVE", color: "bg-slate-700", image: "/cars/verna.jpg", name: "Hyundai Verna", price: "₹10,80,000", year: "2022", kms: "22,000 km", fuel: "Petrol", transmission: "Automatic" },
+//     { id: 8, badge: "TOP RATED", color: "bg-orange-600", image: "/cars/brezza.jpg", name: "Maruti Brezza", price: "₹9,45,000", year: "2022", kms: "28,000 km", fuel: "Petrol", transmission: "Manual" },
+// ];
 
 const Inventory = () => {
+    const navigate = useNavigate();
     return (
-        <section className="bg-white py-16">
+        <section id="inventory" className="bg-white py-16">
             <div className="max-w-7xl mx-auto px-6">
                 {/* Header */}
                 <div className="mb-10 text-center">
@@ -38,7 +41,7 @@ const Inventory = () => {
 
                 {/* View All Cars Button */}
                 <div className="mb-6 flex justify-end">
-                    <button className="group flex items-center gap-2 text-sm font-semibold text-gray-900 transition hover:text-black">
+                    <button onClick={() => navigate("/all-cars")} className="group flex items-center gap-2 text-sm font-semibold text-gray-900 transition hover:text-black">
                         View All Cars
                         <span className="transition-transform duration-300 group-hover:translate-x-1">
                             →
@@ -79,7 +82,9 @@ const Inventory = () => {
                                     <div className="flex items-center gap-1.5"><FaCog className="text-gray-400" /> {car.transmission}</div>
                                 </div>
 
-                                <button className="w-full py-2 bg-gray-100 text-gray-900 text-sm font-semibold rounded-lg transition-all duration-300 hover:bg-[#2b2b2b] hover:text-white">
+                                <button onClick={() => {
+                                    navigate(`/car/${car.id}`);
+                                }} className="w-full py-2 bg-gray-100 text-gray-900 text-sm font-semibold rounded-lg transition-all duration-300 hover:bg-[#2b2b2b] hover:text-white">
                                     View Details
                                 </button>
                             </div>

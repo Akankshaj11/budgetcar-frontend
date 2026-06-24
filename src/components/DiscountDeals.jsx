@@ -1,6 +1,7 @@
 
 
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
     FaCalendarAlt,
     FaGasPump,
@@ -8,15 +9,10 @@ import {
     FaCog,
     FaTag,
 } from "react-icons/fa";
-
-const deals = [
-    { id: 1, badge: "17% OFF", color: "bg-red-500", image: "/cars/baleno.jpg", name: "Maruti Suzuki Baleno", price: "₹5,40,000", original: "₹6,50,000", savings: "₹1,10,000", year: "2020", kms: "41,000 km", fuel: "Petrol", transmission: "Manual" },
-    { id: 2, badge: "16% OFF", color: "bg-red-500", image: "/cars/ecosport.jpg", name: "Ford EcoSport Titanium", price: "₹7,75,000", original: "₹9,20,000", savings: "₹1,45,000", year: "2019", kms: "62,000 km", fuel: "Petrol", transmission: "Manual" },
-    { id: 3, badge: "17% OFF", color: "bg-red-500", image: "/cars/i20.jpg", name: "Hyundai i20 Sportz", price: "₹6,50,000", original: "₹7,80,000", savings: "₹1,30,000", year: "2021", kms: "28,000 km", fuel: "Petrol", transmission: "Manual" },
-    { id: 4, badge: "21% OFF", color: "bg-red-500", image: "/cars/tiago.jpg", name: "Tata Tiago XT", price: "₹4,10,000", original: "₹5,20,000", savings: "₹1,10,000", year: "2020", kms: "35,000 km", fuel: "Petrol", transmission: "Manual" },
-];
+import { deals } from "../data/deals";
 
 const DiscountDeals = () => {
+    const navigate = useNavigate();
     return (
         <section className="bg-white py-16">
             <div className="max-w-7xl mx-auto px-6">
@@ -43,7 +39,10 @@ const DiscountDeals = () => {
 
                 <div className="mb-8 flex justify-end">
 
-                    <button className="group flex items-center gap-2 text-sm font-semibold text-gray-900 transition hover:text-black">
+                    <button 
+                        onClick={() => navigate("/all-deals")}
+                        className="group flex items-center gap-2 text-sm font-semibold text-gray-900 transition hover:text-black cursor-pointer"
+                    >
 
                         View All Deals
 
@@ -95,7 +94,10 @@ const DiscountDeals = () => {
                                     <div className="flex items-center gap-1.5"><FaCog className="text-gray-400" /> {deal.transmission}</div>
                                 </div>
 
-                                <button className="w-full py-2 bg-gray-100 text-gray-900 text-sm font-semibold rounded-lg transition-all duration-300 hover:bg-red-50 hover:text-red-600 flex items-center justify-center gap-2">
+                                <button 
+                                    onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                                    className="w-full py-2 bg-gray-100 text-gray-900 text-sm font-semibold rounded-lg transition-all duration-300 hover:bg-red-50 hover:text-red-600 flex items-center justify-center gap-2 cursor-pointer"
+                                >
                                     <FaTag size={12} /> Grab This Deal
                                 </button>
                             </div>

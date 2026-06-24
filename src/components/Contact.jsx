@@ -250,7 +250,7 @@ const Contact = () => {
     const [intent, setIntent] = useState("Buy");
 
     return (
-        <section className="bg-white py-16">
+        <section id="contact" className="bg-white py-16">
             <div className="max-w-7xl mx-auto px-6">
                 {/* Header */}
                 <div className="text-center mb-12">
@@ -292,7 +292,7 @@ const Contact = () => {
                                 <div>
                                     <h4 className="font-bold text-xs uppercase mb-1">WhatsApp</h4>
                                     <p className="text-sm text-gray-600 mb-2">Chat on WhatsApp</p>
-                                    <a href="#" className="text-sm font-semibold hover:underline">Open WhatsApp</a>
+                                    <a href="https://wa.me/919922801959" target="_blank" rel="noopener noreferrer" className="text-sm font-semibold hover:underline">Open WhatsApp</a>
                                 </div>
                             </div>
                             <div className="bg-gray-50 p-5 rounded-2xl flex gap-3">

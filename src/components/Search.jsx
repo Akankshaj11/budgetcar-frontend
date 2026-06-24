@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 
 const brands = [
@@ -61,6 +63,34 @@ const bodyTypes = [
 ];
 
 const Search = () => {
+  const navigate = useNavigate();
+  const [selectedBrand, setSelectedBrand] = useState("Any Brand");
+  const [selectedBudget, setSelectedBudget] = useState("Any Budget");
+  const [selectedFuel, setSelectedFuel] = useState("Any Fuel Type");
+  const [selectedTransmission, setSelectedTransmission] = useState("Any Transmission");
+  const [selectedBodyType, setSelectedBodyType] = useState("Any Body Type");
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (selectedBrand && selectedBrand !== "Any Brand") {
+      params.append("brand", selectedBrand);
+    }
+    if (selectedBudget && selectedBudget !== "Any Budget") {
+      params.append("budget", selectedBudget);
+    }
+    if (selectedFuel && selectedFuel !== "Any Fuel Type") {
+      params.append("fuel", selectedFuel);
+    }
+    if (selectedTransmission && selectedTransmission !== "Any Transmission") {
+      params.append("transmission", selectedTransmission);
+    }
+    if (selectedBodyType && selectedBodyType !== "Any Body Type") {
+      params.append("bodyType", selectedBodyType);
+    }
+
+    navigate(`/all-cars?${params.toString()}`);
+  };
+
   return (
     <section className="relative bg-white px-6 pt-6 pb-10">
       <div className="max-w-7xl mx-auto bg-[#f5f5f5] rounded-3xl shadow-2xl border border-gray-200 p-8 md:p-10">
@@ -88,7 +118,11 @@ const Search = () => {
               Brand
             </label>
 
-            <select className="w-full rounded-2xl border border-gray-300 bg-white px-5 py-4 outline-none focus:border-black transition">
+            <select 
+              value={selectedBrand}
+              onChange={(e) => setSelectedBrand(e.target.value)}
+              className="w-full rounded-2xl border border-gray-300 bg-white px-5 py-4 outline-none focus:border-black transition cursor-pointer"
+            >
               {brands.map((brand) => (
                 <option key={brand}>{brand}</option>
               ))}
@@ -102,7 +136,11 @@ const Search = () => {
               Budget
             </label>
 
-            <select className="w-full rounded-2xl border border-gray-300 bg-white px-5 py-4 outline-none focus:border-black transition">
+            <select 
+              value={selectedBudget}
+              onChange={(e) => setSelectedBudget(e.target.value)}
+              className="w-full rounded-2xl border border-gray-300 bg-white px-5 py-4 outline-none focus:border-black transition cursor-pointer"
+            >
               {budgets.map((budget) => (
                 <option key={budget}>{budget}</option>
               ))}
@@ -116,7 +154,11 @@ const Search = () => {
               Fuel Type
             </label>
 
-            <select className="w-full rounded-2xl border border-gray-300 bg-white px-5 py-4 outline-none focus:border-black transition">
+            <select 
+              value={selectedFuel}
+              onChange={(e) => setSelectedFuel(e.target.value)}
+              className="w-full rounded-2xl border border-gray-300 bg-white px-5 py-4 outline-none focus:border-black transition cursor-pointer"
+            >
               {fuelTypes.map((fuel) => (
                 <option key={fuel}>{fuel}</option>
               ))}
@@ -130,7 +172,11 @@ const Search = () => {
               Transmission
             </label>
 
-            <select className="w-full rounded-2xl border border-gray-300 bg-white px-5 py-4 outline-none focus:border-black transition">
+            <select 
+              value={selectedTransmission}
+              onChange={(e) => setSelectedTransmission(e.target.value)}
+              className="w-full rounded-2xl border border-gray-300 bg-white px-5 py-4 outline-none focus:border-black transition cursor-pointer"
+            >
               {transmissions.map((item) => (
                 <option key={item}>{item}</option>
               ))}
@@ -144,7 +190,11 @@ const Search = () => {
               Body Type
             </label>
 
-            <select className="w-full rounded-2xl border border-gray-300 bg-white px-5 py-4 outline-none focus:border-black transition">
+            <select 
+              value={selectedBodyType}
+              onChange={(e) => setSelectedBodyType(e.target.value)}
+              className="w-full rounded-2xl border border-gray-300 bg-white px-5 py-4 outline-none focus:border-black transition cursor-pointer"
+            >
               {bodyTypes.map((item) => (
                 <option key={item}>{item}</option>
               ))}
@@ -156,7 +206,10 @@ const Search = () => {
         {/* Button */}
 
         <div className="mt-8">
-          <button className="flex items-center gap-3 rounded-2xl bg-[#1f1f1f] px-8 py-4 text-white font-semibold shadow-lg hover:bg-black transition-all duration-300 hover:scale-[1.02]">
+          <button 
+            onClick={handleSearch}
+            className="flex items-center gap-3 rounded-2xl bg-[#1f1f1f] px-8 py-4 text-white font-semibold shadow-lg hover:bg-black transition-all duration-300 hover:scale-[1.02] cursor-pointer"
+          >
             <FaSearch />
             Search Cars
           </button>

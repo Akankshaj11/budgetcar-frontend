@@ -5,7 +5,7 @@ import { FaCheckCircle, FaArrowRight } from "react-icons/fa";
 
 const SellCar = () => {
     return (
-        <section className="bg-[#1a1a1a] py-27">
+        <section id="sell" className="bg-[#1a1a1a] py-27">
             <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
                 {/* Text Content */}
                 <div>
@@ -33,7 +33,10 @@ const SellCar = () => {
                         ))}
                     </div>
 
-                    <button className="bg-white text-[#1a1a1a] px-6 py-2.5 rounded-xl font-bold text-md flex items-center gap-2 hover:bg-gray-200 transition-colors">
+                    <button 
+                        onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                        className="bg-white text-[#1a1a1a] px-6 py-2.5 rounded-xl font-bold text-md flex items-center gap-2 hover:bg-gray-200 transition-colors cursor-pointer"
+                    >
                         Sell My Car <FaArrowRight size={12} />
                     </button>
                 </div>
