@@ -1,4 +1,4 @@
-export const deals = [
+const defaultDeals = [
   {
     id: 1,
     badge: "17% OFF",
@@ -16,6 +16,7 @@ export const deals = [
     bodyType: "Hatchback",
     owner: "2nd Owner",
     colorName: "Silver",
+    discountPercentage: 17
   },
   {
     id: 2,
@@ -34,6 +35,7 @@ export const deals = [
     bodyType: "SUV",
     owner: "2nd Owner",
     colorName: "White",
+    discountPercentage: 16
   },
   {
     id: 3,
@@ -52,6 +54,7 @@ export const deals = [
     bodyType: "Hatchback",
     owner: "2nd Owner",
     colorName: "Red",
+    discountPercentage: 17
   },
   {
     id: 4,
@@ -70,5 +73,35 @@ export const deals = [
     bodyType: "Hatchback",
     owner: "2nd Owner",
     colorName: "Blue",
+    discountPercentage: 21
   },
 ];
+
+export const getStoredDeals = () => {
+  if (typeof window === "undefined") return defaultDeals;
+  const stored = localStorage.getItem("budget_deals");
+  if (!stored) {
+    localStorage.setItem("budget_deals", JSON.stringify(defaultDeals));
+    return defaultDeals;
+  }
+  try {
+    return JSON.parse(stored);
+  } catch (e) {
+    return defaultDeals;
+  }
+};
+
+export let deals = getStoredDeals();
+
+export const refreshDeals = () => {
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem("budget_deals");
+    if (stored) {
+      try {
+        deals = JSON.parse(stored);
+      } catch (e) {
+        // ignore
+      }
+    }
+  }
+};

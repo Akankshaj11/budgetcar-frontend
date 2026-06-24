@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { FaFacebookF, FaInstagram, FaTwitter, FaYoutube, FaMapMarkerAlt, FaPhone, FaWhatsapp, FaEnvelope, FaClock } from "react-icons/fa";
 
 const Footer = () => {
@@ -69,6 +70,7 @@ const Footer = () => {
                     <a href="#" className="hover:text-white">Privacy Policy</a>
                     <a href="#" className="hover:text-white">Terms of Use</a>
                     <a href="#" className="hover:text-white">Sitemap</a>
+                    <Link to="/admin/login" className="hover:text-white transition-colors font-medium">Admin</Link>
                 </div>
             </div>
         </footer>

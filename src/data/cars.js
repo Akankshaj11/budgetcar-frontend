@@ -1,4 +1,4 @@
-export const cars = [
+const defaultCars = [
   {
     id: 1,
     badge: "HOT DEAL",
@@ -128,3 +128,32 @@ export const cars = [
     colorName: "Orange",
   },
 ];
+
+export const getStoredCars = () => {
+  if (typeof window === "undefined") return defaultCars;
+  const stored = localStorage.getItem("budget_cars");
+  if (!stored) {
+    localStorage.setItem("budget_cars", JSON.stringify(defaultCars));
+    return defaultCars;
+  }
+  try {
+    return JSON.parse(stored);
+  } catch (e) {
+    return defaultCars;
+  }
+};
+
+export let cars = getStoredCars();
+
+export const refreshCars = () => {
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem("budget_cars");
+    if (stored) {
+      try {
+        cars = JSON.parse(stored);
+      } catch (e) {
+        // ignore
+      }
+    }
+  }
+};
