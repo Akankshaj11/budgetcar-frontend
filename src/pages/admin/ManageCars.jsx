@@ -2,29 +2,27 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaTrash, FaEdit, FaCar, FaTag, FaTimes, FaSearch } from "react-icons/fa";
 import AdminSidebar from "../../components/AdminSidebar";
-import { getStoredCars, refreshCars } from "../../data/cars";
-import { getStoredDeals, refreshDeals } from "../../data/deals";
+import useCars from "../../hooks/useCars";
+import { doc, deleteDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const ManageCars = () => {
   const navigate = useNavigate();
 
-  // Load latest state from localStorage
-  const [carsList, setCarsList] = useState(() => getStoredCars());
-  const [dealsList, setDealsList] = useState(() => getStoredDeals());
+  // Load inventory from Firestore
+  const { cars: allCars, loading } = useCars();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleDelete = (id, type) => {
+  const carsList = allCars.filter(car => !car.isDiscount);
+  const dealsList = allCars.filter(car => car.isDiscount);
+
+  const handleDelete = async (id, type) => {
     if (confirm(`Are you sure you want to delete this ${type}?`)) {
-      if (type === "deal") {
-        const updatedDeals = dealsList.filter(deal => deal.id !== id);
-        localStorage.setItem("budget_deals", JSON.stringify(updatedDeals));
-        refreshDeals();
-        setDealsList(updatedDeals);
-      } else {
-        const updatedCars = carsList.filter(car => car.id !== id);
-        localStorage.setItem("budget_cars", JSON.stringify(updatedCars));
-        refreshCars();
-        setCarsList(updatedCars);
+      try {
+        await deleteDoc(doc(db, "cars", id));
+      } catch (err) {
+        console.error("Error deleting document:", err);
+        alert("Failed to delete vehicle.");
       }
     }
   };
@@ -33,17 +31,17 @@ const ManageCars = () => {
   const placeholderImage = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='60' viewBox='0 0 80 60'><rect width='100%' height='100%' fill='%231a1a1e'/><text x='50%' y='55%' font-size='8' font-family='sans-serif' font-weight='bold' fill='%23444' dominant-baseline='middle' text-anchor='middle'>NO IMAGE</text></svg>";
 
   const filteredCars = carsList.filter(car => 
-    car.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    car.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    car.fuel.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    car.transmission.toLowerCase().includes(searchQuery.toLowerCase())
+    (car.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (car.brand || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (car.fuel || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (car.transmission || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const filteredDeals = dealsList.filter(deal => 
-    deal.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    deal.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    deal.fuel.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    deal.transmission.toLowerCase().includes(searchQuery.toLowerCase())
+    (deal.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (deal.brand || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (deal.fuel || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (deal.transmission || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -112,7 +110,13 @@ const ManageCars = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
-                    {filteredCars.length === 0 ? (
+                    {loading ? (
+                      <tr>
+                        <td colSpan="6" className="py-8 text-center text-gray-500">
+                          Loading regular cars...
+                        </td>
+                      </tr>
+                    ) : filteredCars.length === 0 ? (
                       <tr>
                         <td colSpan="6" className="py-8 text-center text-gray-500">
                           {searchQuery ? "No matching regular cars found." : "No regular cars in inventory."}
@@ -136,7 +140,9 @@ const ManageCars = () => {
                               <span className="text-[10px] text-gray-500">{car.brand}</span>
                             </div>
                           </td>
-                          <td className="py-4 font-bold text-white">{car.price}</td>
+                           <td className="py-4 font-bold text-white">
+                            {typeof car.price === "number" ? `₹${car.price.toLocaleString("en-IN")}` : car.price}
+                          </td>
                           <td className="py-4">{car.year}</td>
                           <td className="py-4">{car.kms}</td>
                           <td className="py-4">{car.fuel} • {car.transmission}</td>
@@ -189,7 +195,13 @@ const ManageCars = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
-                    {filteredDeals.length === 0 ? (
+                    {loading ? (
+                      <tr>
+                        <td colSpan="7" className="py-8 text-center text-gray-500">
+                          Loading active deals...
+                        </td>
+                      </tr>
+                    ) : filteredDeals.length === 0 ? (
                       <tr>
                         <td colSpan="7" className="py-8 text-center text-gray-500">
                           {searchQuery ? "No matching deals found." : "No active deals."}
@@ -213,7 +225,9 @@ const ManageCars = () => {
                               <span className="text-[10px] text-gray-500">{deal.brand} (Deal)</span>
                             </div>
                           </td>
-                          <td className="py-4 font-bold text-white">{deal.price}</td>
+                           <td className="py-4 font-bold text-white">
+                            {typeof deal.price === "number" ? `₹${deal.price.toLocaleString("en-IN")}` : deal.price}
+                          </td>
                           <td className="py-4 text-red-400 font-bold">
                             {deal.discountPercentage ? `${deal.discountPercentage}%` : (deal.badge ? deal.badge.replace(/[^\d]/g, "") + "%" : "-")}
                           </td>

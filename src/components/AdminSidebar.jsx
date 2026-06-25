@@ -4,13 +4,19 @@ import {
   FaCarSide, FaHome, FaPlus, FaEnvelope, 
   FaSignOutAlt, FaCar
 } from "react-icons/fa";
+import { auth } from "../firebase";
 
 const AdminSidebar = ({ activeTab }) => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (confirm("Are you sure you want to log out?")) {
-      navigate("/admin");
+      try {
+        await auth.signOut();
+        navigate("/admin");
+      } catch (err) {
+        console.error("Error signing out:", err);
+      }
     }
   };
 

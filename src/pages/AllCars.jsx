@@ -6,13 +6,14 @@ import {
     FaRoad,
     FaCog,
 } from "react-icons/fa";
-import { cars } from "../data/cars";
+import useCars from "../hooks/useCars";
 import NavbarSearch from "../components/NavbarSearch";
 
 const AllCars = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = React.useState("");
+    const { cars, loading } = useCars();
 
     // Filter categories arrays
     const brands = [
@@ -145,7 +146,7 @@ const AllCars = () => {
 
     // Handlers
     const toggleBrand = (brand) => {
-        setSelectedBrands(prev => 
+        setSelectedBrands(prev =>
             prev.includes(brand) ? prev.filter(b => b !== brand) : [...prev, brand]
         );
     };
@@ -186,7 +187,7 @@ const AllCars = () => {
     const handleApply = () => {
         const newParams = new URLSearchParams();
         if (selectedBrands.length > 0) newParams.set("brand", selectedBrands[0]);
-        
+
         if (maxPrice < 7000000) {
             if (maxPrice === 300000) newParams.set("budget", "Below ₹3 Lakh");
             else if (maxPrice === 500000) newParams.set("budget", "₹3 - ₹5 Lakh");
@@ -198,14 +199,16 @@ const AllCars = () => {
         if (selectedFuelTypes.length > 0) newParams.set("fuel", selectedFuelTypes[0]);
         if (selectedTransmissions.length > 0) newParams.set("transmission", selectedTransmissions[0]);
         if (selectedBodyTypes.length > 0) newParams.set("bodyType", selectedBodyTypes[0]);
-        
+
         setSearchParams(newParams);
     };
 
     // Helper functions for parsing properties
-    const parsePriceNumeric = (priceStr) => {
-        return parseInt(priceStr.replace(/[^\d]/g, ""), 10);
-    };
+    // const parsePriceNumeric = (priceStr) => {
+    //     return parseInt(priceStr.replace(/[^\d]/g, ""), 10);
+    // };
+
+    const parsePriceNumeric = (price) => Number(price);
 
     const parseKmsNumeric = (kmsStr) => {
         return parseInt(kmsStr.replace(/[^\d]/g, ""), 10);
@@ -217,7 +220,7 @@ const AllCars = () => {
             // Search Query from navbar
             if (searchQuery) {
                 const query = searchQuery.toLowerCase();
-                const matchesSearch = 
+                const matchesSearch =
                     car.name.toLowerCase().includes(query) ||
                     (car.brand && car.brand.toLowerCase().includes(query)) ||
                     car.fuel.toLowerCase().includes(query) ||
@@ -292,8 +295,11 @@ const AllCars = () => {
             if (sortBy === "KMs Driven") {
                 return parseKmsNumeric(a.kms) - parseKmsNumeric(b.kms);
             }
-            // "Newest First" (default sort by ID desc)
-            return b.id - a.id;
+            // "Newest First" (default sort by date desc or string ID desc)
+            const dateA = a.createdAt?.seconds || 0;
+            const dateB = b.createdAt?.seconds || 0;
+            if (dateA && dateB) return dateB - dateA;
+            return String(b.id).localeCompare(String(a.id));
         });
     }, [searchQuery, maxPrice, selectedBrands, selectedYearLimit, selectedFuelTypes, selectedBodyTypes, selectedTransmissions, selectedOwner, selectedColor, sortBy]);
 
@@ -302,7 +308,7 @@ const AllCars = () => {
             <NavbarSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
             <section className="bg-[#f6f7fb] min-h-screen py-8 text-gray-900">
                 <div className="max-w-7xl mx-auto px-6">
-                    
+
                     {/* Header Navigation & Title */}
                     <div className="mb-8">
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -323,7 +329,7 @@ const AllCars = () => {
                                 <p className="text-sm text-gray-500 font-medium whitespace-nowrap">
                                     {filteredCars.length} Cars Found
                                 </p>
-                                <select 
+                                <select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value)}
                                     className="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 outline-none hover:bg-gray-50 transition shadow-sm cursor-pointer"
@@ -340,7 +346,7 @@ const AllCars = () => {
 
                     {/* Main Layout Grid */}
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                        
+
                         {/* ================= LEFT FILTERS SIDEBAR ================= */}
                         <div className="lg:col-span-1">
                             <div className="sticky top-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -393,11 +399,11 @@ const AllCars = () => {
                                                 .filter(b => b.toLowerCase().includes(brandSearchQuery.toLowerCase()))
                                                 .map((brand) => (
                                                     <label key={brand} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
-                                                        <input 
-                                                            type="checkbox" 
+                                                        <input
+                                                            type="checkbox"
                                                             checked={selectedBrands.includes(brand)}
                                                             onChange={() => toggleBrand(brand)}
-                                                            className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
+                                                            className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer"
                                                         />
                                                         <span>{brand}</span>
                                                     </label>
@@ -417,12 +423,12 @@ const AllCars = () => {
                                                 const yearVal = parseInt(yearStr, 10);
                                                 return (
                                                     <label key={yearStr} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-950 transition">
-                                                        <input 
-                                                            type="radio" 
-                                                            name="year" 
+                                                        <input
+                                                            type="radio"
+                                                            name="year"
                                                             checked={selectedYearLimit === yearVal}
                                                             onChange={() => setSelectedYearLimit(yearVal)}
-                                                            className="border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
+                                                            className="border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer"
                                                         />
                                                         <span>{yearStr}</span>
                                                     </label>
@@ -441,11 +447,11 @@ const AllCars = () => {
                                         <div className="space-y-2 text-xs font-medium text-gray-700">
                                             {fuelTypes.map((fuel) => (
                                                 <label key={fuel} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
-                                                    <input 
-                                                        type="checkbox" 
+                                                    <input
+                                                        type="checkbox"
                                                         checked={selectedFuelTypes.includes(fuel)}
                                                         onChange={() => toggleFuelType(fuel)}
-                                                        className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
+                                                        className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer"
                                                     />
                                                     <span>{fuel}</span>
                                                 </label>
@@ -463,11 +469,11 @@ const AllCars = () => {
                                         <div className="space-y-2 text-xs font-medium text-gray-700">
                                             {bodyTypes.map((body) => (
                                                 <label key={body} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
-                                                    <input 
-                                                        type="checkbox" 
+                                                    <input
+                                                        type="checkbox"
                                                         checked={selectedBodyTypes.includes(body)}
                                                         onChange={() => toggleBodyType(body)}
-                                                        className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
+                                                        className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer"
                                                     />
                                                     <span>{body}</span>
                                                 </label>
@@ -485,11 +491,11 @@ const AllCars = () => {
                                         <div className="space-y-2 text-xs font-medium text-gray-700">
                                             {transmissions.map((item) => (
                                                 <label key={item} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
-                                                    <input 
-                                                        type="checkbox" 
+                                                    <input
+                                                        type="checkbox"
                                                         checked={selectedTransmissions.includes(item)}
                                                         onChange={() => toggleTransmission(item)}
-                                                        className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
+                                                        className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer"
                                                     />
                                                     <span>{item}</span>
                                                 </label>
@@ -507,12 +513,12 @@ const AllCars = () => {
                                         <div className="space-y-2 text-xs font-medium text-gray-700">
                                             {owners.map((owner) => (
                                                 <label key={owner} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
-                                                    <input 
-                                                        type="radio" 
-                                                        name="owner" 
+                                                    <input
+                                                        type="radio"
+                                                        name="owner"
                                                         checked={selectedOwner === owner}
                                                         onChange={() => setSelectedOwner(owner)}
-                                                        className="border-gray-305 bg-white text-gray-600 focus:ring-gray-400 cursor-pointer" 
+                                                        className="border-gray-305 bg-white text-gray-600 focus:ring-gray-400 cursor-pointer"
                                                     />
                                                     <span>{owner}</span>
                                                 </label>
@@ -542,13 +548,13 @@ const AllCars = () => {
 
                                 {/* Reset / Apply Buttons */}
                                 <div className="mt-5 flex gap-3 pt-3 border-t border-gray-100">
-                                    <button 
+                                    <button
                                         onClick={handleReset}
                                         className="flex-1 rounded-xl border border-gray-200 py-2.5 text-xs font-bold text-gray-650 hover:bg-gray-50 transition cursor-pointer"
                                     >
                                         Reset
                                     </button>
-                                    <button 
+                                    <button
                                         onClick={handleApply}
                                         className="flex-1 rounded-xl bg-gray-900 py-2.5 text-xs font-bold text-white hover:bg-gray-800 transition shadow-sm cursor-pointer"
                                     >
@@ -565,7 +571,7 @@ const AllCars = () => {
                                     <div className="text-4xl mb-4">🔍</div>
                                     <h3 className="text-lg font-bold text-gray-900 mb-1">No Cars Found</h3>
                                     <p className="text-sm text-gray-500 mb-6 max-w-sm mx-auto">We couldn't find any cars matching your current filters. Try resetting the filters or broadening your search query.</p>
-                                    <button 
+                                    <button
                                         onClick={handleReset}
                                         className="px-5 py-2.5 rounded-xl bg-gray-900 text-xs font-bold text-white hover:bg-gray-800 transition cursor-pointer shadow-sm"
                                     >
@@ -600,7 +606,7 @@ const AllCars = () => {
                                                         {car.name}
                                                     </h3>
                                                     <p className="mt-1 text-lg font-extrabold text-gray-950">
-                                                        {car.price}
+                                                        ₹{Number(car.price).toLocaleString("en-IN")}
                                                     </p>
 
                                                     {/* Specs Pill Grid */}
@@ -637,7 +643,7 @@ const AllCars = () => {
                                 </div>
                             )}
                         </div>
-                        
+
                     </div>
                 </div>
             </section>

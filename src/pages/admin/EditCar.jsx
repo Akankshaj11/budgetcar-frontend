@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaCheck, FaTimes, FaUpload, FaCar, FaImage, FaListUl, FaPercent } from "react-icons/fa";
 import AdminSidebar from "../../components/AdminSidebar";
-import { getStoredCars, refreshCars } from "../../data/cars";
-import { getStoredDeals, refreshDeals } from "../../data/deals";
+import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../../firebase";
+import { uploadImage } from "../../services/cloudinary";
 
 const EditCar = () => {
   const navigate = useNavigate();
@@ -28,7 +29,8 @@ const EditCar = () => {
 
   // Images States
   const [coverImage, setCoverImage] = useState("");
-  const [galleryImages, setGalleryImages] = useState([]);
+  const [coverFile, setCoverFile] = useState(null);
+  const [galleryItems, setGalleryItems] = useState([]);
 
   // Features Checkboxes States
   const [featuresList, setFeaturesList] = useState({
@@ -51,78 +53,84 @@ const EditCar = () => {
 
   // Load the vehicle data on mount
   useEffect(() => {
-    const numericId = parseInt(id, 10);
-    let vehicle = null;
+    const loadVehicle = async () => {
+      try {
+        const snap = await getDoc(doc(db, "cars", id));
+        if (!snap.exists()) {
+          alert("Vehicle not found!");
+          navigate("/admin/manage-cars");
+          return;
+        }
+        const vehicle = { id: snap.id, ...snap.data() };
 
-    if (type === "deal") {
-      const dealsList = getStoredDeals();
-      vehicle = dealsList.find(d => d.id === numericId);
-    } else {
-      const carsList = getStoredCars();
-      vehicle = carsList.find(c => c.id === numericId);
-    }
+        // Set state fields
+        setCarName(vehicle.name || "");
+        setBrand(vehicle.brand || "Maruti Suzuki");
+        
+        // Attempt to parse model and variant from full name if not separate
+        const nameWithoutBrand = (vehicle.name || "").replace(vehicle.brand || "", "").trim();
+        const nameWords = nameWithoutBrand.split(" ");
+        setModel(nameWords[0] || "");
+        setVariant(nameWords.slice(1).join(" ") || "");
 
-    if (!vehicle) {
-      alert("Vehicle not found!");
-      navigate("/admin/manage-cars");
-      return;
-    }
+        // Pre-fill fields
+        if (vehicle.isDiscount) {
+          setPrice(vehicle.original ? String(vehicle.original) : (vehicle.price ? String(vehicle.price) : ""));
+          setDiscountType("discount");
+          setDiscountPercentage(vehicle.discountPercentage || "");
+        } else {
+          setPrice(vehicle.price ? String(vehicle.price) : "");
+          setDiscountType("no-discount");
+          setDiscountPercentage("");
+        }
 
-    // Set state fields
-    setCarName(vehicle.name || "");
-    setBrand(vehicle.brand || "Maruti Suzuki");
-    
-    // Attempt to parse model and variant from full name if not separate
-    const nameWords = (vehicle.name || "").replace(vehicle.brand || "", "").trim().split(" ");
-    setModel(nameWords[0] || "");
-    setVariant(nameWords.slice(1).join(" ") || "");
+        setYear(vehicle.year || "");
+        setFuel(vehicle.fuel || "Petrol");
+        setTransmission(vehicle.transmission || "Manual");
+        setBodyType(vehicle.bodyType || "Hatchback");
+        setOwnership(vehicle.owner || "2nd Owner");
+        setKmDriven(vehicle.kms ? vehicle.kms.replace(/[^\d]/g, "") : "");
+        setColor(vehicle.colorName || "");
+        setRegistrationCity(vehicle.registrationCity || "");
+        setInsurance(vehicle.insurance || "Comprehensive");
+        setDescription(vehicle.description || "");
+        
+        // Features checkbox mapping
+        const activeFeatures = vehicle.features || [];
+        setFeaturesList({
+          airbags: activeFeatures.includes("Airbags"),
+          rearCamera: activeFeatures.includes("Rear Camera"),
+          touchscreen: activeFeatures.includes("Touchscreen"),
+          sunroof: activeFeatures.includes("Sunroof"),
+          alloyWheels: activeFeatures.includes("Alloy Wheels"),
+          abs: activeFeatures.includes("ABS"),
+          cruiseControl: activeFeatures.includes("Cruise Control"),
+          parkingSensors: activeFeatures.includes("Parking Sensors")
+        });
 
-    // Pre-fill fields
-    // If it is a deal, we pre-fill the "originalPrice" field as the price, so they can edit it
-    if (type === "deal") {
-      setPrice(vehicle.original ? vehicle.original.replace(/[^\d]/g, "") : (vehicle.price ? vehicle.price.replace(/[^\d]/g, "") : ""));
-      setDiscountType("discount");
-      const parsedPct = vehicle.discountPercentage || (vehicle.badge ? vehicle.badge.replace(/[^\d]/g, "") : "");
-      setDiscountPercentage(parsedPct);
-    } else {
-      setPrice(vehicle.price ? vehicle.price.replace(/[^\d]/g, "") : "");
-      setDiscountType("no-discount");
-      setDiscountPercentage("");
-    }
+        setCoverImage(vehicle.image || "");
+        
+        // Map URLs to object structure
+        const initialGallery = (vehicle.gallery || []).map((url) => ({
+          id: Math.random().toString(36).substr(2, 9),
+          url: url,
+          file: null
+        }));
+        setGalleryItems(initialGallery);
 
-    setYear(vehicle.year || "");
-    setFuel(vehicle.fuel || "Petrol");
-    setTransmission(vehicle.transmission || "Manual");
-    setBodyType(vehicle.bodyType || "Hatchback");
-    setOwnership(vehicle.owner || "2nd Owner");
-    setKmDriven(vehicle.kms ? vehicle.kms.replace(/[^\d]/g, "") : "");
-    setColor(vehicle.colorName || "");
-    setRegistrationCity(vehicle.registrationCity || "");
-    setInsurance(vehicle.insurance || "Comprehensive");
-    setDescription(vehicle.description || "");
-    
-    // Features checkbox mapping
-    const activeFeatures = vehicle.features || [];
-    setFeaturesList({
-      airbags: activeFeatures.includes("Airbags"),
-      rearCamera: activeFeatures.includes("Rear Camera"),
-      touchscreen: activeFeatures.includes("Touchscreen"),
-      sunroof: activeFeatures.includes("Sunroof"),
-      alloyWheels: activeFeatures.includes("Alloy Wheels"),
-      abs: activeFeatures.includes("ABS"),
-      cruiseControl: activeFeatures.includes("Cruise Control"),
-      parkingSensors: activeFeatures.includes("Parking Sensors")
-    });
+      } catch (err) {
+        console.error("Error loading vehicle details:", err);
+      }
+    };
 
-    setCoverImage(vehicle.image || "");
-    setGalleryImages(vehicle.gallery || []);
-
-  }, [type, id, navigate]);
+    loadVehicle();
+  }, [id, navigate]);
 
   // Handler for Cover Image (Single)
   const handleCoverChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setCoverFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setCoverImage(reader.result);
@@ -137,14 +145,21 @@ const EditCar = () => {
     files.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setGalleryImages((prev) => [...prev, reader.result]);
+        setGalleryItems((prev) => [
+          ...prev,
+          {
+            id: Math.random().toString(36).substr(2, 9),
+            url: reader.result,
+            file: file
+          }
+        ]);
       };
       reader.readAsDataURL(file);
     });
   };
 
-  const removeGalleryImage = (index) => {
-    setGalleryImages((prev) => prev.filter((_, i) => i !== index));
+  const removeGalleryImage = (itemId) => {
+    setGalleryItems((prev) => prev.filter((item) => item.id !== itemId));
   };
 
   const handleFeatureToggle = (featureKey) => {
@@ -154,7 +169,7 @@ const EditCar = () => {
     }));
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     setSuccessMsg("");
 
@@ -165,129 +180,113 @@ const EditCar = () => {
 
     setIsSaving(true);
 
-    setTimeout(() => {
-      try {
-        const numericId = parseInt(id, 10);
-        const basePrice = parseInt(price, 10);
-        const formattedKms = parseInt(kmDriven, 10).toLocaleString("en-IN") + " km";
-        
-        // Compile features array
-        const selectedFeatures = [];
-        const featureLabels = {
-          airbags: "Airbags",
-          rearCamera: "Rear Camera",
-          touchscreen: "Touchscreen",
-          sunroof: "Sunroof",
-          alloyWheels: "Alloy Wheels",
-          abs: "ABS",
-          cruiseControl: "Cruise Control",
-          parkingSensors: "Parking Sensors"
-        };
-        Object.keys(featuresList).forEach((key) => {
-          if (featuresList[key]) {
-            selectedFeatures.push(featureLabels[key]);
-          }
-        });
+    try {
+      // 1. Upload Cover Image if a new one is selected
+      let finalImageUrl = coverImage;
+      if (coverFile) {
+        const uploadedUrl = await uploadImage(coverFile);
+        if (uploadedUrl) {
+          finalImageUrl = uploadedUrl;
+        } else {
+          alert("Failed to upload cover image.");
+          setIsSaving(false);
+          return;
+        }
+      }
 
-        const isCurrentlyDiscounted = discountType === "discount" && discountPercentage;
-
-        // Load storage lists
-        let carsList = getStoredCars();
-        let dealsList = getStoredDeals();
-
-        if (isCurrentlyDiscounted) {
-          const pct = parseInt(discountPercentage, 10);
-          const savingsVal = Math.round((basePrice * pct) / 100);
-          const finalPriceVal = basePrice - savingsVal;
-
-          const updatedDeal = {
-            id: type === "deal" ? numericId : (dealsList.length > 0 ? Math.max(...dealsList.map(d => d.id)) + 1 : 1),
-            badge: `${pct}% OFF`,
-            color: "bg-red-500",
-            image: coverImage,
-            gallery: galleryImages,
-            name: carName,
-            price: "₹" + finalPriceVal.toLocaleString("en-IN"),
-            original: "₹" + basePrice.toLocaleString("en-IN"),
-            savings: "₹" + savingsVal.toLocaleString("en-IN"),
-            year: String(year),
-            kms: formattedKms,
-            fuel: fuel,
-            transmission: transmission,
-            brand: brand,
-            bodyType: bodyType,
-            owner: ownership,
-            colorName: color,
-            registrationCity: registrationCity,
-            insurance: insurance,
-            description: description,
-            features: selectedFeatures,
-            discountPercentage: pct
-          };
-
-          // Save to dealsList
-          if (type === "deal") {
-            dealsList = dealsList.map(d => d.id === numericId ? updatedDeal : d);
+      // 2. Upload Gallery Images if any new files are selected
+      const finalGalleryUrls = [];
+      for (const item of galleryItems) {
+        if (item.file) {
+          const uploadedUrl = await uploadImage(item.file);
+          if (uploadedUrl) {
+            finalGalleryUrls.push(uploadedUrl);
           } else {
-            // Moved from cars to deals
-            dealsList = [updatedDeal, ...dealsList];
-            carsList = carsList.filter(c => c.id !== numericId);
+            console.error(`Failed to upload gallery image: ${item.file.name}`);
           }
         } else {
-          // Process Regular Car
-          const updatedCar = {
-            id: type === "car" ? numericId : (carsList.length > 0 ? Math.max(...carsList.map(c => c.id)) + 1 : 1),
-            badge: "CERTIFIED",
-            color: "bg-blue-600",
-            image: coverImage,
-            gallery: galleryImages,
-            name: carName,
-            price: "₹" + basePrice.toLocaleString("en-IN"),
-            year: String(year),
-            kms: formattedKms,
-            fuel: fuel,
-            transmission: transmission,
-            brand: brand,
-            bodyType: bodyType,
-            owner: ownership,
-            colorName: color,
-            registrationCity: registrationCity,
-            insurance: insurance,
-            description: description,
-            features: selectedFeatures
-          };
-
-          // Save to carsList
-          if (type === "car") {
-            carsList = carsList.map(c => c.id === numericId ? updatedCar : c);
-          } else {
-            // Moved from deals to cars
-            carsList = [updatedCar, ...carsList];
-            dealsList = dealsList.filter(d => d.id !== numericId);
-          }
+          finalGalleryUrls.push(item.url);
         }
-
-        // Commit to localStorage
-        localStorage.setItem("budget_cars", JSON.stringify(carsList));
-        localStorage.setItem("budget_deals", JSON.stringify(dealsList));
-        
-        // Sync dynamic runtime bindings
-        refreshCars();
-        refreshDeals();
-
-        setIsSaving(false);
-        setSuccessMsg("Changes saved successfully!");
-
-        setTimeout(() => {
-          navigate("/admin/manage-cars");
-        }, 800);
-
-      } catch (err) {
-        console.error("Error saving changes:", err);
-        setIsSaving(false);
-        alert("Failed to save changes.");
       }
-    }, 1000);
+
+      const basePrice = parseInt(price, 10);
+      const formattedKms = parseInt(kmDriven, 10).toLocaleString("en-IN") + " km";
+      
+      // Compile features array
+      const selectedFeatures = [];
+      const featureLabels = {
+        airbags: "Airbags",
+        rearCamera: "Rear Camera",
+        touchscreen: "Touchscreen",
+        sunroof: "Sunroof",
+        alloyWheels: "Alloy Wheels",
+        abs: "ABS",
+        cruiseControl: "Cruise Control",
+        parkingSensors: "Parking Sensors"
+      };
+      Object.keys(featuresList).forEach((key) => {
+        if (featuresList[key]) {
+          selectedFeatures.push(featureLabels[key]);
+        }
+      });
+
+      const isCurrentlyDiscounted = discountType === "discount" && discountPercentage;
+
+      const docData = {
+        name: carName,
+        brand: brand,
+        year: String(year),
+        kms: formattedKms,
+        fuel: fuel,
+        transmission: transmission,
+        bodyType: bodyType,
+        owner: ownership,
+        colorName: color,
+        registrationCity: registrationCity,
+        insurance: insurance,
+        description: description,
+        features: selectedFeatures,
+        image: finalImageUrl,
+        gallery: finalGalleryUrls,
+        updatedAt: serverTimestamp()
+      };
+
+      if (isCurrentlyDiscounted) {
+        const pct = parseInt(discountPercentage, 10);
+        const savingsVal = Math.round((basePrice * pct) / 100);
+        const finalPriceVal = basePrice - savingsVal;
+
+        docData.price = finalPriceVal;
+        docData.original = basePrice;
+        docData.savings = savingsVal;
+        docData.discountPercentage = pct;
+        docData.badge = `${pct}% OFF`;
+        docData.color = "bg-red-500";
+        docData.isDiscount = true;
+      } else {
+        docData.price = basePrice;
+        docData.original = null;
+        docData.savings = null;
+        docData.discountPercentage = null;
+        docData.badge = "CERTIFIED";
+        docData.color = "bg-blue-600";
+        docData.isDiscount = false;
+      }
+
+      await updateDoc(doc(db, "cars", id), docData);
+
+      setIsSaving(false);
+      setSuccessMsg("Changes saved successfully!");
+
+      setTimeout(() => {
+        navigate("/admin/manage-cars");
+      }, 800);
+
+    } catch (err) {
+      console.error("Error saving changes:", err);
+      setIsSaving(false);
+      alert("Failed to save changes.");
+    }
   };
 
   const brands = [
@@ -591,16 +590,16 @@ const EditCar = () => {
               </div>
 
               {/* Gallery Previews Grid */}
-              {galleryImages.length > 0 && (
+              {galleryItems.length > 0 && (
                 <div className="space-y-3 pt-2">
-                  <span className="block text-[9px] font-bold uppercase tracking-wider text-gray-500">Gallery Previews ({galleryImages.length})</span>
+                  <span className="block text-[9px] font-bold uppercase tracking-wider text-gray-500">Gallery Previews ({galleryItems.length})</span>
                   <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-4">
-                    {galleryImages.map((img, index) => (
-                      <div key={index} className="relative aspect-video rounded-xl overflow-hidden border border-white/10 group bg-gray-900">
-                        <img src={img} className="w-full h-full object-cover" alt="" />
+                    {galleryItems.map((item) => (
+                      <div key={item.id} className="relative aspect-video rounded-xl overflow-hidden border border-white/10 group bg-gray-900">
+                        <img src={item.url} className="w-full h-full object-cover" alt="" />
                         <button
                           type="button"
-                          onClick={() => removeGalleryImage(index)}
+                          onClick={() => removeGalleryImage(item.id)}
                           className="absolute top-1.5 right-1.5 p-1 rounded-full bg-black/60 text-white hover:text-red-400 opacity-0 group-hover:opacity-100 transition duration-200"
                         >
                           <FaTimes size={8} />

@@ -8,7 +8,7 @@ import {
     FaCog,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { cars } from "../data/cars";
+import useCars from "../hooks/useCars";
 
 // const cars = [
 //     { id: 1, badge: "HOT DEAL", color: "bg-orange-500", image: "/cars/swift.jpg", name: "Maruti Suzuki Swift", price: "₹4,85,000", year: "2021", kms: "32,000 km", fuel: "Petrol", transmission: "Manual" },
@@ -23,6 +23,14 @@ import { cars } from "../data/cars";
 
 const Inventory = () => {
     const navigate = useNavigate();
+    const { cars, loading } = useCars();
+    if (loading) {
+    return (
+        <div className="py-20 text-center text-lg font-semibold">
+            Loading Cars...
+        </div>
+    );
+}
     return (
         <section id="inventory" className="bg-white py-16">
             <div className="max-w-7xl mx-auto px-6">
@@ -73,7 +81,9 @@ const Inventory = () => {
                             {/* Card Details */}
                             <div className="p-3">
                                 <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">{car.name}</h3>
-                                <p className="font-bold text-gray-900 text-md mb-2">{car.price}</p>
+                                <p className="font-bold text-gray-900 text-md mb-2">
+    ₹{Number(car.price).toLocaleString("en-IN")}
+</p>
 
                                 <div className="grid grid-cols-2 gap-y-2 text-xs text-gray-500 mb-3">
                                     <div className="flex items-center gap-1.5"><FaCalendarAlt className="text-gray-400" /> {car.year}</div>

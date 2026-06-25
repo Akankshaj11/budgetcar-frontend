@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { FaMapMarkerAlt, FaPhone, FaWhatsapp, FaEnvelope, FaClock, FaCheckCircle } from "react-icons/fa";
+import { db } from "../firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 const Contact = () => {
     const [intent, setIntent] = useState("Buy");
@@ -10,7 +12,7 @@ const Contact = () => {
     
     const [successMsg, setSuccessMsg] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         
         if (!name || !phone || !email || !message) {
@@ -19,20 +21,16 @@ const Contact = () => {
         }
 
         const newEnquiry = {
-            id: Date.now(),
             name,
             phone,
             email,
             message,
             type: intent.toLowerCase().replace(/\s+/g, ""), // "buy", "sell", "testdrive"
-            date: new Date().toLocaleString("en-IN")
+            createdAt: serverTimestamp()
         };
 
         try {
-            const stored = localStorage.getItem("budget_enquiries");
-            const currentEnquiries = stored ? JSON.parse(stored) : [];
-            const updatedEnquiries = [newEnquiry, ...currentEnquiries];
-            localStorage.setItem("budget_enquiries", JSON.stringify(updatedEnquiries));
+            await addDoc(collection(db, "enquiries"), newEnquiry);
 
             setSuccessMsg("Thank you! Your message has been sent successfully.");
             setName("");

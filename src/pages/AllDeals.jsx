@@ -7,13 +7,15 @@ import {
     FaCog,
     FaTag,
 } from "react-icons/fa";
-import { deals } from "../data/deals";
+import useCars from "../hooks/useCars";
 import NavbarSearch from "../components/NavbarSearch";
 
 const AllDeals = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = React.useState("");
+    const { cars, loading } = useCars();
+    const deals = React.useMemo(() => cars.filter(car => car.isDiscount), [cars]);
 
     // Filter categories arrays
     const brands = [
@@ -204,8 +206,10 @@ const AllDeals = () => {
     };
 
     // Helper functions for parsing properties
-    const parsePriceNumeric = (priceStr) => {
-        return parseInt(priceStr.replace(/[^\d]/g, ""), 10);
+    const parsePriceNumeric = (price) => {
+        if (typeof price === "number") return price;
+        if (typeof price === "string") return parseInt(price.replace(/[^\d]/g, ""), 10) || 0;
+        return 0;
     };
 
     const parseKmsNumeric = (kmsStr) => {
@@ -293,10 +297,21 @@ const AllDeals = () => {
             if (sortBy === "KMs Driven") {
                 return parseKmsNumeric(a.kms) - parseKmsNumeric(b.kms);
             }
-            // "Newest First" (default sort by ID desc)
-            return b.id - a.id;
+            // "Newest First" (default sort by date desc or string ID desc)
+            const dateA = a.createdAt?.seconds || 0;
+            const dateB = b.createdAt?.seconds || 0;
+            if (dateA && dateB) return dateB - dateA;
+            return String(b.id).localeCompare(String(a.id));
         });
     }, [searchQuery, maxPrice, selectedBrands, selectedYearLimit, selectedFuelTypes, selectedBodyTypes, selectedTransmissions, selectedOwner, selectedColor, sortBy]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex justify-center items-center bg-[#111111] text-white">
+                <p className="text-lg font-semibold">Loading Deals...</p>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -602,14 +617,14 @@ const AllDeals = () => {
                                                     </h3>
                                                     <div className="mt-1 flex items-center gap-2">
                                                         <span className="text-lg font-extrabold text-gray-950">
-                                                            {car.price}
+                                                            {typeof car.price === "number" ? `₹${car.price.toLocaleString("en-IN")}` : car.price}
                                                         </span>
                                                         <span className="text-xs font-semibold text-gray-400 line-through">
-                                                            {car.original}
+                                                            {typeof car.original === "number" ? `₹${car.original.toLocaleString("en-IN")}` : car.original}
                                                         </span>
                                                     </div>
                                                     <p className="text-[10px] font-bold text-green-600">
-                                                        Save {car.savings}
+                                                        Save {typeof car.savings === "number" ? `₹${car.savings.toLocaleString("en-IN")}` : car.savings}
                                                     </p>
 
                                                     {/* Specs Pill Grid */}

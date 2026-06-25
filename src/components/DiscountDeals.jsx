@@ -9,10 +9,19 @@ import {
     FaCog,
     FaTag,
 } from "react-icons/fa";
-import { deals } from "../data/deals";
+import useCars from "../hooks/useCars";
 
 const DiscountDeals = () => {
     const navigate = useNavigate();
+    const { cars, loading } = useCars();
+    if (loading) {
+    return (
+        <div className="py-20 text-center text-lg font-semibold">
+            Loading Deals...
+        </div>
+    );
+}
+    const deals = cars.filter(car => car.isDiscount);
     return (
         <section className="bg-white py-16">
             <div className="max-w-7xl mx-auto px-6">
@@ -82,10 +91,10 @@ const DiscountDeals = () => {
                                 <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">{deal.name}</h3>
 
                                 <div className="flex items-center gap-2 mb-0.5">
-                                    <p className="font-bold text-gray-900 text-md">{deal.price}</p>
-                                    <p className="text-gray-400 text-xs line-through">{deal.original}</p>
+                                    <p className="font-bold text-gray-900 text-md">₹{Number(deal.price).toLocaleString("en-IN")}</p>
+                                    <p className="text-gray-400 text-xs line-through">₹{Number(deal.original || deal.originalPrice).toLocaleString("en-IN")}</p>
                                 </div>
-                                <p className="text-green-600 text-[11px] font-semibold mb-3">You save {deal.savings}</p>
+                                <p className="text-green-600 text-[11px] font-semibold mb-3">You save ₹{Number(deal.savings || deal.discount).toLocaleString("en-IN")}</p>
 
                                 <div className="grid grid-cols-2 gap-y-2 text-xs text-gray-500 mb-3">
                                     <div className="flex items-center gap-1.5"><FaCalendarAlt className="text-gray-400" /> {deal.year}</div>

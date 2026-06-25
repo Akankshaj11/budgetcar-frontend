@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { FaInbox, FaTrash, FaPhoneAlt, FaEnvelope, FaClock, FaTags } from "react-icons/fa";
 import AdminSidebar from "../../components/AdminSidebar";
+import useEnquiries from "../../hooks/useEnquiries";
+import { doc, deleteDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const defaultEnquiries = [
   {
@@ -33,28 +36,18 @@ const defaultEnquiries = [
 ];
 
 const Enquiries = () => {
-  // Load enquiries from localStorage
-  const [enquiries, setEnquiries] = useState(() => {
-    if (typeof window === "undefined") return defaultEnquiries;
-    const stored = localStorage.getItem("budget_enquiries");
-    if (!stored) {
-      localStorage.setItem("budget_enquiries", JSON.stringify(defaultEnquiries));
-      return defaultEnquiries;
-    }
-    try {
-      return JSON.parse(stored);
-    } catch (e) {
-      return defaultEnquiries;
-    }
-  });
-
+  // Load enquiries from Firestore
+  const { enquiries, loading } = useEnquiries();
   const [activeFilter, setActiveFilter] = useState("all"); // "all", "buy", "sell", "testdrive"
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (confirm("Are you sure you want to delete this enquiry?")) {
-      const updated = enquiries.filter(item => item.id !== id);
-      localStorage.setItem("budget_enquiries", JSON.stringify(updated));
-      setEnquiries(updated);
+      try {
+        await deleteDoc(doc(db, "enquiries", id));
+      } catch (err) {
+        console.error("Error deleting enquiry:", err);
+        alert("Failed to delete enquiry.");
+      }
     }
   };
 
@@ -89,7 +82,7 @@ const Enquiries = () => {
         <header className="h-20 border-b border-white/5 px-8 flex items-center justify-between shrink-0">
           <h1 className="text-lg font-bold text-white">Client Enquiries</h1>
           <span className="text-xs text-gray-500 font-bold bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg">
-            Inbox ({enquiries.length})
+            Inbox ({loading ? "..." : enquiries.length})
           </span>
         </header>
 
@@ -120,7 +113,11 @@ const Enquiries = () => {
 
           {/* Enquiries List */}
           <div className="space-y-4">
-            {filteredEnquiries.length === 0 ? (
+            {loading ? (
+              <div className="bg-white/[0.01] border border-white/[0.04] rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3">
+                <p className="text-sm text-gray-500 font-semibold">Loading client enquiries...</p>
+              </div>
+            ) : filteredEnquiries.length === 0 ? (
               <div className="bg-white/[0.01] border border-white/[0.04] rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3">
                 <FaInbox size={32} className="text-gray-600" />
                 <p className="text-sm text-gray-500 font-semibold">No enquiries found</p>

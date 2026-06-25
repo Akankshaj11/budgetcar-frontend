@@ -1,25 +1,32 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { FaCar, FaTag } from "react-icons/fa";
-import { getStoredCars } from "../../data/cars";
-import { getStoredDeals } from "../../data/deals";
+import useCars from "../../hooks/useCars";
 import AdminSidebar from "../../components/AdminSidebar";
 
 const AdminDashboard = () => {
   const [searchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "dashboard";
 
-  // Load inventory dynamically for statistics
-  const carsList = getStoredCars();
-  const dealsList = getStoredDeals();
+  // Load inventory from Firestore
+  const { cars: carsList, loading } = useCars();
+
+  const dealsList = carsList.filter(car => car.isDiscount);
 
   // Calculate Statistics
-  const totalValuation = [...carsList, ...dealsList].reduce((acc, cur) => {
-    const numericPrice = parseInt(cur.price.replace(/[^\d]/g, ""), 10);
+  const totalValuation = carsList.reduce((acc, cur) => {
+    const numericPrice = typeof cur.price === "number" ? cur.price : parseInt(String(cur.price || "").replace(/[^\d]/g, ""), 10);
     return acc + (isNaN(numericPrice) ? 0 : numericPrice);
   }, 0);
 
-  const averagePrice = totalValuation / (carsList.length + dealsList.length || 1);
+  const averagePrice = totalValuation / (carsList.length || 1);
+
+  // Sort by date for recently added list
+  const sortedCars = [...carsList].sort((a, b) => {
+    const dateA = a.createdAt?.seconds || 0;
+    const dateB = b.createdAt?.seconds || 0;
+    return dateB - dateA;
+  });
 
   return (
     <main className="h-screen bg-[#070709] text-gray-300 flex overflow-hidden">
@@ -49,10 +56,10 @@ const AdminDashboard = () => {
               {/* Stat Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {[
-                  { title: "Total Cars", val: carsList.length + dealsList.length, icon: <FaCar className="text-white" size={16} /> },
-                  { title: "Active Deals", val: dealsList.length, icon: <FaTag className="text-red-400" size={16} /> },
-                  { title: "Total Valuation", val: `₹${(totalValuation / 100000).toFixed(1)} L`, icon: <span className="text-green-400 font-bold text-xs">₹</span> },
-                  { title: "Average Price", val: `₹${(averagePrice / 100000).toFixed(1)} L`, icon: <span className="text-cyan-400 font-bold text-xs">avg</span> }
+                  { title: "Total Cars", val: loading ? "..." : carsList.length, icon: <FaCar className="text-white" size={16} /> },
+                  { title: "Active Deals", val: loading ? "..." : dealsList.length, icon: <FaTag className="text-red-400" size={16} /> },
+                  { title: "Total Valuation", val: loading ? "..." : `₹${(totalValuation / 100000).toFixed(1)} L`, icon: <span className="text-green-400 font-bold text-xs">₹</span> },
+                  { title: "Average Price", val: loading ? "..." : `₹${(averagePrice / 100000).toFixed(1)} L`, icon: <span className="text-cyan-400 font-bold text-xs">avg</span> }
                 ].map((stat, i) => (
                   <div key={i} className="bg-white/2 border border-white/6 p-6 rounded-2xl flex items-center justify-between">
                     <div>
@@ -83,35 +90,51 @@ const AdminDashboard = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                      {carsList.slice(0, 4).map((car) => (
-                        <tr key={car.id} className="text-gray-300 hover:bg-white/1">
-                          <td className="py-4 flex items-center gap-3">
-                            <img 
-                              src={car.image} 
-                              className="w-10 h-8 rounded object-cover bg-gray-900 border border-white/10 shrink-0" 
-                              alt={car.name}
-                              onError={(e) => { 
-                                e.target.onerror = null; 
-                                e.target.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='60' viewBox='0 0 80 60'><rect width='100%' height='100%' fill='%231a1a1e'/><text x='50%' y='55%' font-size='8' font-family='sans-serif' font-weight='bold' fill='%23444' dominant-baseline='middle' text-anchor='middle'>NO IMAGE</text></svg>"; 
-                              }} 
-                            />
-                            <div>
-                              <p className="font-bold text-white">{car.name}</p>
-                              <span className="text-[10px] text-gray-500">{car.brand}</span>
-                            </div>
-                          </td>
-                          <td className="py-4 font-bold text-white">{car.price}</td>
-                          <td className="py-4">
-                            <span className="inline-block bg-white/5 border border-white/10 px-2 py-0.5 rounded text-[10px] mr-1.5">{car.year}</span>
-                            <span className="inline-block bg-white/5 border border-white/10 px-2 py-0.5 rounded text-[10px]">{car.kms}</span>
-                          </td>
-                          <td className="py-4">
-                            <span className={`inline-block px-2.5 py-0.5 rounded-md text-[9px] font-bold text-white uppercase ${car.color || "bg-blue-600"}`}>
-                              {car.badge || "NEW"}
-                            </span>
+                      {loading ? (
+                        <tr>
+                          <td colSpan="4" className="py-8 text-center text-gray-500">
+                            Loading recently added cars...
                           </td>
                         </tr>
-                      ))}
+                      ) : sortedCars.length === 0 ? (
+                        <tr>
+                          <td colSpan="4" className="py-8 text-center text-gray-500">
+                            No vehicles found in inventory.
+                          </td>
+                        </tr>
+                      ) : (
+                        sortedCars.slice(0, 4).map((car) => (
+                          <tr key={car.id} className="text-gray-300 hover:bg-white/1">
+                            <td className="py-4 flex items-center gap-3">
+                              <img 
+                                src={car.image} 
+                                className="w-10 h-8 rounded object-cover bg-gray-900 border border-white/10 shrink-0" 
+                                alt={car.name}
+                                onError={(e) => { 
+                                  e.target.onerror = null; 
+                                  e.target.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='60' viewBox='0 0 80 60'><rect width='100%' height='100%' fill='%231a1a1e'/><text x='50%' y='55%' font-size='8' font-family='sans-serif' font-weight='bold' fill='%23444' dominant-baseline='middle' text-anchor='middle'>NO IMAGE</text></svg>"; 
+                                }} 
+                              />
+                              <div>
+                                <p className="font-bold text-white">{car.name}</p>
+                                <span className="text-[10px] text-gray-500">{car.brand}</span>
+                              </div>
+                            </td>
+                            <td className="py-4 font-bold text-white">
+                              {typeof car.price === "number" ? `₹${car.price.toLocaleString("en-IN")}` : car.price}
+                            </td>
+                            <td className="py-4">
+                              <span className="inline-block bg-white/5 border border-white/10 px-2 py-0.5 rounded text-[10px] mr-1.5">{car.year}</span>
+                              <span className="inline-block bg-white/5 border border-white/10 px-2 py-0.5 rounded text-[10px]">{car.kms}</span>
+                            </td>
+                            <td className="py-4">
+                              <span className={`inline-block px-2.5 py-0.5 rounded-md text-[9px] font-bold text-white uppercase ${car.color || "bg-blue-600"}`}>
+                                {car.badge || "NEW"}
+                              </span>
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
