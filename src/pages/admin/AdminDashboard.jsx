@@ -39,7 +39,7 @@ const AdminDashboard = () => {
         
         {/* Top Header */}
         <header className="h-20 border-b border-white/5 px-8 flex items-center justify-between shrink-0">
-          <h1 className="text-lg font-bold text-white capitalize">
+          <h1 className="text-lg font-bold text-white capitalize pl-12 md:pl-0">
             {activeTab}
           </h1>
           <span className="text-xs text-gray-500 font-bold bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg">

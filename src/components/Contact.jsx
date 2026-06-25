@@ -63,8 +63,14 @@ const Contact = () => {
                     {/* Left Column */}
                     <div className="space-y-6 h-full flex flex-col">
                         {/* Map Height */}
-                        <div className="h-48 bg-gray-200 rounded-2xl overflow-hidden shrink-0">
-                            <div className="w-full h-full flex items-center justify-center text-gray-500">Map Embed Area</div>
+                        <div className="h-48 bg-gray-200 rounded-2xl overflow-hidden shrink-0 border border-gray-100 shadow-inner">
+                            <iframe 
+                                src="https://maps.google.com/maps?q=Sr.No%2030,%20Pune%20Nagar%20Rd,%20opp.%20Canara%20Bank,%20Viman%20Nagar,%20Pune%20411014&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                                className="w-full h-full border-0" 
+                                allowFullScreen="" 
+                                loading="lazy" 
+                                title="Budget Car Pune Location Map"
+                            ></iframe>
                         </div>
                         
                         {/* Contact Info Cards */}

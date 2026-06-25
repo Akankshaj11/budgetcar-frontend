@@ -44,9 +44,9 @@ const SellCar = () => {
                 {/* Image Section */}
                 <div className="relative">
                     <img
-                        src="/path-to-your-car-image.jpg"
+                        src="/hero-car.png"
                         alt="Car"
-                        className="rounded-3xl w-full h-100 object-cover shadow-2xl"
+                        className="rounded-3xl w-full h-64 sm:h-96 lg:h-100 object-cover shadow-2xl"
                     />
                     {/* Floating Badge */}
                     <div className="absolute -bottom-6 left-6 bg-white text-[#1a1a1a] p-4 rounded-2xl shadow-xl w-40">

@@ -12,6 +12,7 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const isSolid = scrolled || location.pathname !== "/";
 
   const links = ["Home", "About", "Inventory", "Sell", "Contact"];
 
@@ -73,8 +74,8 @@ const Navbar = () => {
     <>
       <nav
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-          scrolled
-            ? "bg-white/80 backdrop-blur-xl shadow-lg"
+          isSolid
+            ? "bg-white/80 backdrop-blur-xl shadow-lg border-b border-gray-150"
             : "bg-transparent"
         }`}
       >
@@ -87,7 +88,7 @@ const Navbar = () => {
 
               <div
                 className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
-                  scrolled
+                  isSolid
                     ? "bg-gray-900 text-white"
                     : "bg-white/20 backdrop-blur-md border border-white/20 text-white"
                 }`}
@@ -98,7 +99,7 @@ const Navbar = () => {
               <div>
                 <h2
                   className={`text-2xl font-semibold leading-none transition-colors duration-300 ${
-                    scrolled ? "text-gray-900" : "text-white"
+                    isSolid ? "text-gray-900" : "text-white"
                   }`}
                 >
                   Budget Car
@@ -106,7 +107,7 @@ const Navbar = () => {
 
                 <p
                   className={`uppercase text-[11px] tracking-[2px] transition-colors duration-300 ${
-                    scrolled ? "text-gray-600" : "text-gray-300"
+                    isSolid ? "text-gray-600" : "text-gray-300"
                   }`}
                 >
                   Trusted Cars
@@ -122,14 +123,14 @@ const Navbar = () => {
                   key={item}
                   onClick={() => handleLinkClick(item)}
                   className={`relative font-medium cursor-pointer transition-colors duration-300 group ${
-                    scrolled ? "text-gray-900" : "text-white"
+                    isSolid ? "text-gray-900" : "text-white"
                   }`}
                 >
                   {item}
 
                   <span
                     className={`absolute -bottom-2 left-0 h-0.5 w-0 transition-all duration-300 group-hover:w-full ${
-                      scrolled ? "bg-gray-900" : "bg-white"
+                      isSolid ? "bg-gray-900" : "bg-white"
                     }`}
                   ></span>
                 </li>
@@ -143,7 +144,7 @@ const Navbar = () => {
               <a
                 href="tel:+919922801959"
                 className={`text-xl animate-phone transition-colors duration-300 ${
-                  scrolled
+                  isSolid
                     ? "text-gray-900 hover:text-gray-600"
                     : "text-white hover:text-gray-300"
                 }`}
@@ -154,7 +155,7 @@ const Navbar = () => {
               <button
                 onClick={handleBookTestDrive}
                 className={`px-7 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 cursor-pointer ${
-                  scrolled
+                  isSolid
                     ? "bg-gray-900 text-white hover:bg-black"
                     : "bg-white text-gray-900 hover:bg-gray-200"
                 }`}
@@ -169,7 +170,7 @@ const Navbar = () => {
             <button
               onClick={() => setOpen(!open)}
               className={`lg:hidden text-2xl transition-colors duration-300 ${
-                scrolled ? "text-gray-900" : "text-white"
+                isSolid ? "text-gray-900" : "text-white"
               }`}
             >
               {open ? <FaTimes /> : <FaBars />}

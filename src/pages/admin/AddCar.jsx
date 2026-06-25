@@ -34,6 +34,10 @@ const AddCar = () => {
   const [galleryImages, setGalleryImages] = useState([]);
   const [galleryFiles, setGalleryFiles] = useState([]);
 
+  // Video States
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoPreview, setVideoPreview] = useState("");
+
   // Features Checkboxes States
   const [featuresList, setFeaturesList] = useState({
     airbags: false,
@@ -87,6 +91,18 @@ const AddCar = () => {
     });
   };
 
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setVideoFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setVideoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const removeGalleryImage = (index) => {
     setGalleryImages((prev) => prev.filter((_, i) => i !== index));
   };
@@ -111,6 +127,7 @@ const AddCar = () => {
 
     let imageUrl = "";
     let galleryUrls = [];
+    let videoUrl = "";
 
     if (image) {
       imageUrl = await uploadImage(image);
@@ -122,6 +139,10 @@ const AddCar = () => {
       if (url) {
         galleryUrls.push(url);
       }
+    }
+
+    if (videoFile) {
+      videoUrl = await uploadImage(videoFile);
     }
 
     // setTimeout(() => {
@@ -160,7 +181,6 @@ const AddCar = () => {
         const finalPriceVal = basePrice - savingsVal;
 
         const newDeal = {
-          // id: newId,
           badge: `${pct}% OFF`,
           color: "bg-red-500",
           image: imageUrl,
@@ -174,6 +194,8 @@ const AddCar = () => {
           fuel: fuel,
           transmission: transmission,
           brand: brand,
+          model: model,
+          variant: variant,
           bodyType: bodyType,
           owner: ownership,
           colorName: color || "Unknown",
@@ -181,7 +203,8 @@ const AddCar = () => {
           insurance: insurance,
           description: description,
           features: selectedFeatures,
-          discountPercentage: pct
+          discountPercentage: pct,
+          video: videoUrl
         };
 
         await addDoc(collection(db, "cars"), {
@@ -189,17 +212,10 @@ const AddCar = () => {
           isDiscount: true,
           createdAt: serverTimestamp(),
         });
-        // const updatedDeals = [newDeal, ...currentDeals];
 
       } else {
         // Process Regular Car
-        // const storedCars = localStorage.getItem("budget_cars");
-        // const currentCars = storedCars ? JSON.parse(storedCars) : [];
-
-        // const newId = currentCars.length > 0 ? Math.max(...currentCars.map(c => c.id)) + 1 : 1;
-
         const newCar = {
-          // id: newId,
           badge: "CERTIFIED",
           color: "bg-blue-600",
           image: imageUrl,
@@ -211,23 +227,22 @@ const AddCar = () => {
           fuel: fuel,
           transmission: transmission,
           brand: brand,
+          model: model,
+          variant: variant,
           bodyType: bodyType,
           owner: ownership,
           colorName: color || "Unknown",
           registrationCity: registrationCity,
           insurance: insurance,
           description: description,
-          features: selectedFeatures
+          features: selectedFeatures,
+          video: videoUrl
         };
 
         await addDoc(collection(db, "cars"), {
           ...newCar,
           createdAt: serverTimestamp(),
         });
-        // const updatedCars = [newCar, ...currentCars];
-        // localStorage.setItem("budget_cars", JSON.stringify(updatedCars));
-        // refreshCars();
-
       }
 
       setIsSaving(false);
@@ -243,9 +258,10 @@ const AddCar = () => {
       setColor("");
       setRegistrationCity("");
       setDescription("");
-      setCoverImage("");
       setGalleryImages([]);
       setGalleryFiles([]);
+      setVideoFile(null);
+      setVideoPreview("");
       setDiscountPercentage("");
       setDiscountType("no-discount");
       setFeaturesList({
@@ -285,9 +301,8 @@ return (
     {/* Main Content Area */}
     <section className="grow flex flex-col overflow-y-auto">
 
-      {/* Top Header */}
       <header className="h-20 border-b border-white/5 px-8 flex items-center justify-between shrink-0">
-        <h1 className="text-lg font-bold text-white">Add New Car</h1>
+        <h1 className="text-lg font-bold text-white pl-12 md:pl-0">Add New Car</h1>
         <span className="text-xs text-gray-500 font-bold bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg">
           Create Record
         </span>
@@ -511,7 +526,7 @@ return (
               </h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
               {/* Cover Image Upload */}
               <div>
@@ -560,6 +575,40 @@ return (
                     <p className="text-xs font-bold text-gray-400">Upload Gallery Photos</p>
                     <p className="text-[9px] text-gray-600">Select multiple files</p>
                   </div>
+                </div>
+              </div>
+
+              {/* Video Walk-around Upload */}
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-3">Walk-around Video (Optional)</label>
+                <div className="relative border-2 border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center bg-white/2 hover:bg-white/3 transition cursor-pointer group h-48">
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={handleVideoChange}
+                    className="absolute inset-0 opacity-0 cursor-pointer"
+                  />
+                  {videoPreview ? (
+                    <div className="w-full h-full relative">
+                      <video src={videoPreview} className="w-full h-full object-cover rounded-xl border border-white/10" muted />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setVideoFile(null);
+                          setVideoPreview("");
+                        }}
+                        className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:text-red-400 transition"
+                      >
+                        <FaTimes size={10} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-center space-y-2">
+                      <FaUpload className="text-gray-500 group-hover:text-white transition duration-300 mx-auto" size={24} />
+                      <p className="text-xs font-bold text-gray-400">Upload Video</p>
+                      <p className="text-[9px] text-gray-600">Video walk-around (*.mp4, *.mov)</p>
+                    </div>
+                  )}
                 </div>
               </div>
 

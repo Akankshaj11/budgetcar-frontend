@@ -32,6 +32,10 @@ const EditCar = () => {
   const [coverFile, setCoverFile] = useState(null);
   const [galleryItems, setGalleryItems] = useState([]);
 
+  // Video States
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoPreview, setVideoPreview] = useState("");
+
   // Features Checkboxes States
   const [featuresList, setFeaturesList] = useState({
     airbags: false,
@@ -67,11 +71,16 @@ const EditCar = () => {
         setCarName(vehicle.name || "");
         setBrand(vehicle.brand || "Maruti Suzuki");
         
-        // Attempt to parse model and variant from full name if not separate
-        const nameWithoutBrand = (vehicle.name || "").replace(vehicle.brand || "", "").trim();
-        const nameWords = nameWithoutBrand.split(" ");
-        setModel(nameWords[0] || "");
-        setVariant(nameWords.slice(1).join(" ") || "");
+        if (vehicle.model) {
+          setModel(vehicle.model);
+          setVariant(vehicle.variant || "");
+        } else {
+          // Attempt to parse model and variant from full name if not separate
+          const nameWithoutBrand = (vehicle.name || "").replace(vehicle.brand || "", "").trim();
+          const nameWords = nameWithoutBrand.split(" ");
+          setModel(nameWords[0] || "");
+          setVariant(nameWords.slice(1).join(" ") || "");
+        }
 
         // Pre-fill fields
         if (vehicle.isDiscount) {
@@ -109,6 +118,7 @@ const EditCar = () => {
         });
 
         setCoverImage(vehicle.image || "");
+        setVideoPreview(vehicle.video || "");
         
         // Map URLs to object structure
         const initialGallery = (vehicle.gallery || []).map((url) => ({
@@ -162,6 +172,18 @@ const EditCar = () => {
     setGalleryItems((prev) => prev.filter((item) => item.id !== itemId));
   };
 
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setVideoFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setVideoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleFeatureToggle = (featureKey) => {
     setFeaturesList((prev) => ({
       ...prev,
@@ -209,6 +231,21 @@ const EditCar = () => {
         }
       }
 
+      // 3. Upload Video Walk-around if selected
+      let finalVideoUrl = videoPreview;
+      if (videoFile) {
+        const uploadedUrl = await uploadImage(videoFile);
+        if (uploadedUrl) {
+          finalVideoUrl = uploadedUrl;
+        } else {
+          alert("Failed to upload video.");
+          setIsSaving(false);
+          return;
+        }
+      } else if (!videoPreview) {
+        finalVideoUrl = null;
+      }
+
       const basePrice = parseInt(price, 10);
       const formattedKms = parseInt(kmDriven, 10).toLocaleString("en-IN") + " km";
       
@@ -235,6 +272,8 @@ const EditCar = () => {
       const docData = {
         name: carName,
         brand: brand,
+        model: model,
+        variant: variant,
         year: String(year),
         kms: formattedKms,
         fuel: fuel,
@@ -248,6 +287,7 @@ const EditCar = () => {
         features: selectedFeatures,
         image: finalImageUrl,
         gallery: finalGalleryUrls,
+        video: finalVideoUrl,
         updatedAt: serverTimestamp()
       };
 
@@ -309,9 +349,8 @@ const EditCar = () => {
       {/* Main Content Area */}
       <section className="flex-grow flex flex-col overflow-y-auto">
         
-        {/* Top Header */}
         <header className="h-20 border-b border-white/5 px-8 flex items-center justify-between shrink-0">
-          <h1 className="text-lg font-bold text-white">Edit Vehicle Details</h1>
+          <h1 className="text-lg font-bold text-white pl-12 md:pl-0">Edit Vehicle Details</h1>
           <span className="text-xs text-gray-500 font-bold bg-white/5 border border-white/10 px-3 py-1.5 rounded-lg uppercase">
             Edit Mode ({type})
           </span>
@@ -535,7 +574,7 @@ const EditCar = () => {
                 </h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 
                 {/* Cover Image Upload */}
                 <div>
@@ -584,6 +623,40 @@ const EditCar = () => {
                       <p className="text-xs font-bold text-gray-400">Upload Gallery Photos</p>
                       <p className="text-[9px] text-gray-600">Select multiple files</p>
                     </div>
+                  </div>
+                </div>
+
+                {/* Video Walk-around Upload */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-3">Walk-around Video (Optional)</label>
+                  <div className="relative border-2 border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center bg-white/[0.01] hover:bg-white/[0.02] transition cursor-pointer group h-48">
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={handleVideoChange}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                    {videoPreview ? (
+                      <div className="w-full h-full relative">
+                        <video src={videoPreview} className="w-full h-full object-cover rounded-xl border border-white/10" muted controls />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setVideoFile(null);
+                            setVideoPreview("");
+                          }}
+                          className="absolute top-2 right-2 p-1.5 rounded-full bg-black/60 text-white hover:text-red-400 transition"
+                        >
+                          <FaTimes size={10} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="text-center space-y-2">
+                        <FaUpload className="text-gray-500 group-hover:text-white transition duration-300 mx-auto" size={24} />
+                        <p className="text-xs font-bold text-gray-400">Upload Video</p>
+                        <p className="text-[9px] text-gray-600">Video walk-around (*.mp4, *.mov)</p>
+                      </div>
+                    )}
                   </div>
                 </div>
 

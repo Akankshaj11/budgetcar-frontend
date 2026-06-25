@@ -112,39 +112,35 @@ import { FaStar } from "react-icons/fa";
 const reviews = [
     {
         id: 1,
-        name: "Rajesh Kulkarni",
-        location: "Kothrud, Pune",
-        review: "Found a pristine Honda City at a genuinely fair price. The inspection report was thorough and the paperwork was done in a single afternoon. Best used car experience I have had in Pune.",
+        name: "Dattatray Yadav",
+        location: "Pune",
+        review: "I had purchased a wagonr car from a budget car. My family and I are very happy. We got a nice car, Amit sir is really trusted person\nWe are very thankful to Amit Sir and Ajay sir, he gave us a nice car, thanks all Bujet car team",
         rating: 5,
-        car: "Honda City 2020",
-        avatar: "/avatars/rajesh.jpg",
+        car: "Maruti Suzuki WagonR",
     },
     {
         id: 2,
-        name: "Priya Deshmukh",
-        location: "Baner, Pune",
-        review: "Sold my old Swift here. They gave me a better price than any other dealer, picked up the car from home, and transferred the amount the very next day. Highly recommend!",
-        rating: 5,
-        car: "Sold Maruti Swift 2018",
-        avatar: "/avatars/priya.jpg",
+        name: "Pratiksha dodake",
+        location: "Pune",
+        review: "My experiance was great I loved the car very much and I am happy with the service provided by Pratik sir but only the issue was with pricing was a bit high of 4.5 lacks for 2013 model .",
+        rating: 4,
+        car: "Purchased Car",
     },
     {
         id: 3,
-        name: "Aakash Sharma",
-        location: "Wakad, Pune",
-        review: "The team helped me shortlist three cars within my budget and arranged back-to-back test drives on the same morning. Zero pressure sales. Drove home a Creta that day!",
+        name: "Pragati Borade",
+        location: "Pune",
+        review: "recently purchased my first car and I'm thrilled with the experience. I got an amazing deal and excellent service from Budget Car. Their team was professional, helpful, and made the entire process smooth and hassle-free.",
         rating: 5,
-        car: "Hyundai Creta 2022",
-        avatar: "/avatars/aakash.jpg",
+        car: "Purchased Car",
     },
     {
         id: 4,
-        name: "Sneha Patil",
-        location: "Hadapsar, Pune",
-        review: "Great selection of cars. Staff is knowledgeable and patient. The loan process through their partner bank was smooth. Would definitely return for my next upgrade.",
-        rating: 4,
-        car: "Tata Nexon EV 2022",
-        avatar: "/avatars/sneha.jpg",
+        name: "Asif Jakhate",
+        location: "Pune",
+        review: "Budget car has good amount of cars available. The staff is very humble and always ready to help specially Pratik😊. After sales service is also good, My cars suspension was not working properly so they did changed it to new. Thanks to Pratik, I hope we are friends now 😜.",
+        rating: 5,
+        car: "Purchased Car",
     },
 ];
 
@@ -166,32 +162,30 @@ const Reviews = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {reviews.map((item) => (
-                        // Set flex-col h-full so the card stretches to fill the grid row
-                        <div key={item.id} className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm flex flex-col h-full">
+                        <div key={item.id} className="bg-white border border-gray-100 p-4.5 rounded-xl shadow-xs flex flex-col h-full">
                             
-                            {/* Content wrapper - flex-grow ensures this pushes the footer to the bottom */}
+                            {/* Content wrapper */}
                             <div className="grow">
-                                <div className="flex gap-0.5 mb-4">
+                                <div className="flex gap-0.5 mb-2.5">
                                     {[...Array(5)].map((_, i) => (
-                                        <FaStar key={i} className={i < item.rating ? "text-yellow-400" : "text-gray-200"} size={16} />
+                                        <FaStar key={i} className={i < item.rating ? "text-yellow-400" : "text-gray-200"} size={14} />
                                     ))}
                                 </div>
-                                <p className="text-gray-600 text-sm mb-6 leading-relaxed">"{item.review}"</p>
+                                <p className="text-gray-600 text-xs md:text-sm mb-4 leading-relaxed whitespace-pre-line">"{item.review}"</p>
                             </div>
 
-                            {/* Footer area - always stays aligned at the bottom */}
+                            {/* Footer area */}
                             <div className="mt-auto">
-                                <div className="border-t border-gray-100 my-4" />
-                                <div className="flex items-center gap-3 mb-4">
-                                    <img src={item.avatar} alt={item.name} className="w-10 h-10 rounded-full object-cover" />
+                                <div className="border-t border-gray-100 my-3" />
+                                <div className="flex items-center gap-2.5">
+                                    <div className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs shrink-0 uppercase">
+                                        {item.name.trim().charAt(0)}
+                                    </div>
                                     <div>
-                                        <h4 className="font-bold text-gray-900 text-md">{item.name}</h4>
-                                        <p className="text-gray-400 text-[14px]">{item.location}</p>
+                                        <h4 className="font-bold text-gray-900 text-xs md:text-sm leading-tight">{item.name}</h4>
+                                        <p className="text-gray-400 text-[11px] leading-tight mt-0.5">{item.location}</p>
                                     </div>
                                 </div>
-                                <span className="inline-block bg-gray-50 text-gray-600 text-[13px] font-semibold px-3 py-1 rounded-full">
-                                    {item.car}
-                                </span>
                             </div>
                         </div>
                     ))}

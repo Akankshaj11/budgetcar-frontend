@@ -24,15 +24,24 @@ import useCars from "../hooks/useCars";
 const Inventory = () => {
     const navigate = useNavigate();
     const { cars, loading } = useCars();
+
     if (loading) {
+        return (
+            <div className="py-20 text-center text-lg font-semibold">
+                Loading Cars...
+            </div>
+        );
+    }
+
+    // Filter out discounted cars from normal inventory
+    const regularCars = cars.filter(car => !car.isDiscount);
+
+    if (regularCars.length === 0) {
+        return null;
+    }
+
     return (
-        <div className="py-20 text-center text-lg font-semibold">
-            Loading Cars...
-        </div>
-    );
-}
-    return (
-        <section id="inventory" className="bg-white py-16">
+        <section id="inventory" className="bg-white py-5">
             <div className="max-w-7xl mx-auto px-6">
                 {/* Header */}
                 <div className="mb-10 text-center">
@@ -59,7 +68,7 @@ const Inventory = () => {
 
                 {/* Cars Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    {cars.map((car) => (
+                    {regularCars.map((car) => (
                         <div
                             key={car.id}
                             className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
@@ -80,10 +89,13 @@ const Inventory = () => {
 
                             {/* Card Details */}
                             <div className="p-3">
+                                <p className="text-[10px] font-bold text-red-650 uppercase tracking-wider mb-0.5">
+                                    {car.brand} {car.model && `• ${car.model}`}
+                                </p>
                                 <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">{car.name}</h3>
                                 <p className="font-bold text-gray-900 text-md mb-2">
-    ₹{Number(car.price).toLocaleString("en-IN")}
-</p>
+                                    ₹{Number(car.price).toLocaleString("en-IN")}
+                                </p>
 
                                 <div className="grid grid-cols-2 gap-y-2 text-xs text-gray-500 mb-3">
                                     <div className="flex items-center gap-1.5"><FaCalendarAlt className="text-gray-400" /> {car.year}</div>

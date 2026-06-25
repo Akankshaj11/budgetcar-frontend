@@ -1,7 +1,5 @@
-
-
-
 import { Routes, Route } from "react-router-dom";
+import ScrollToTop from "./components/ScrollToTop";
 
 import Home from "./pages/Home";
 import CarDetailPage from "./pages/CarDetailPage";
@@ -16,19 +14,22 @@ import Enquiries from "./pages/admin/Enquiries";
 
 const App = () => {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/all-cars" element={<AllCars />} />
-      <Route path="/all-deals" element={<AllDeals />} />
-      <Route path="/car/:id" element={<CarDetailPage />} />
-      <Route path="/admin" element={<AdminLogin />} />
-      <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin/dashboard" element={<AdminDashboard />} />
-      <Route path="/admin/add-car" element={<AddCar />} />
-      <Route path="/admin/manage-cars" element={<ManageCars />} />
-      <Route path="/admin/edit-car/:type/:id" element={<EditCar />} />
-      <Route path="/admin/enquiries" element={<Enquiries />} />
-    </Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/all-cars" element={<AllCars />} />
+        <Route path="/all-deals" element={<AllDeals />} />
+        <Route path="/car/:id" element={<CarDetailPage />} />
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/add-car" element={<AddCar />} />
+        <Route path="/admin/manage-cars" element={<ManageCars />} />
+        <Route path="/admin/edit-car/:type/:id" element={<EditCar />} />
+        <Route path="/admin/enquiries" element={<Enquiries />} />
+      </Routes>
+    </>
   );
 };
 

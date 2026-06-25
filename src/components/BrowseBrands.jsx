@@ -39,7 +39,7 @@ const BrowseBrands = () => {
             Browse By Brand
           </p>
 
-          <h2 className="mt-3 text-5xl font-extrabold text-[#1a1a1a]">
+          <h2 className="mt-3 text-3xl md:text-5xl font-extrabold text-[#1a1a1a]">
             Second Hand Cars of Your Favourite Brand
           </h2>
 

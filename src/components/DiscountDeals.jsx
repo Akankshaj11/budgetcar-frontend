@@ -22,8 +22,12 @@ const DiscountDeals = () => {
     );
 }
     const deals = cars.filter(car => car.isDiscount);
+
+    if (deals.length === 0) {
+        return null;
+    }
     return (
-        <section className="bg-white py-16">
+        <section className="bg-white py-15">
             <div className="max-w-7xl mx-auto px-6">
                 {/* Header */}
                 <div className="mb-5">
@@ -88,6 +92,9 @@ const DiscountDeals = () => {
                             </div>
 
                             <div className="p-3">
+                                <p className="text-[10px] font-bold text-red-650 uppercase tracking-wider mb-0.5">
+                                    {deal.brand} {deal.model && `• ${deal.model}`}
+                                </p>
                                 <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">{deal.name}</h3>
 
                                 <div className="flex items-center gap-2 mb-0.5">

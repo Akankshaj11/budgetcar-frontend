@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaCarSide, FaSearch, FaBars, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-const NavbarSearch = ({ searchQuery, setSearchQuery }) => {
+const NavbarSearch = ({ searchQuery, setSearchQuery, hideLinks = false }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const links = ["Home", "About", "Inventory", "Sell", "Contact"];
@@ -58,18 +58,20 @@ const NavbarSearch = ({ searchQuery, setSearchQuery }) => {
             </div>
 
             {/* Right: Desktop Links */}
-            <ul className="hidden lg:flex items-center gap-7">
-              {links.map((item) => (
-                <li
-                  key={item}
-                  onClick={() => handleLinkClick(item)}
-                  className="relative text-sm font-semibold text-gray-700 cursor-pointer hover:text-gray-955 transition-colors duration-300 group py-1"
-                >
-                  {item}
-                  <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-gray-900 transition-all duration-300 group-hover:w-full"></span>
-                </li>
-              ))}
-            </ul>
+            {!hideLinks && (
+              <ul className="hidden lg:flex items-center gap-7">
+                {links.map((item) => (
+                  <li
+                    key={item}
+                    onClick={() => handleLinkClick(item)}
+                    className="relative text-sm font-semibold text-gray-700 cursor-pointer hover:text-gray-955 transition-colors duration-300 group py-1"
+                  >
+                    {item}
+                    <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-gray-900 transition-all duration-300 group-hover:w-full"></span>
+                  </li>
+                ))}
+              </ul>
+            )}
 
             {/* Book Drive Button */}
             <div className="hidden lg:flex items-center gap-4 shrink-0">
@@ -132,7 +134,7 @@ const NavbarSearch = ({ searchQuery, setSearchQuery }) => {
         </div>
 
         <ul className="flex flex-col gap-6 px-8 mt-6">
-          {links.map((item) => (
+          {!hideLinks && links.map((item) => (
             <li
               key={item}
               onClick={() => handleLinkClick(item)}

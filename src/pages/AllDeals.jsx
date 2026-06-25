@@ -6,6 +6,9 @@ import {
     FaRoad,
     FaCog,
     FaTag,
+    FaFilter,
+    FaTimes,
+    FaArrowLeft,
 } from "react-icons/fa";
 import useCars from "../hooks/useCars";
 import NavbarSearch from "../components/NavbarSearch";
@@ -18,24 +21,24 @@ const AllDeals = () => {
     const deals = React.useMemo(() => cars.filter(car => car.isDiscount), [cars]);
 
     // Filter categories arrays
-    const brands = [
-        "Maruti Suzuki",
-        "Hyundai",
-        "Tata",
-        "Mahindra",
-        "Toyota",
-        "Honda",
-        "Kia",
-        "Volkswagen",
-        "Skoda",
-        "Renault",
-        "Ford",
-        "MG",
-        "Nissan",
-        "Jeep",
-        "BMW",
-        "Mercedes-Benz",
-        "Audi",
+    const displayBrands = [
+        { display: "Maruti Suzuki", dbValue: "Maruti Suzuki" },
+        { display: "Hyundai", dbValue: "Hyundai" },
+        { display: "Tata Motors", dbValue: "Tata" },
+        { display: "Honda", dbValue: "Honda" },
+        { display: "Toyota", dbValue: "Toyota" },
+        { display: "Mahindra", dbValue: "Mahindra" },
+        { display: "Kia", dbValue: "Kia" },
+        { display: "Volkswagen", dbValue: "Volkswagen" },
+        { display: "Ford", dbValue: "Ford" },
+        { display: "Renault", dbValue: "Renault" },
+        { display: "MG Motor", dbValue: "MG" },
+        { display: "Skoda", dbValue: "Skoda" },
+        { display: "Nissan", dbValue: "Nissan" },
+        { display: "Jeep", dbValue: "Jeep" },
+        { display: "BMW", dbValue: "BMW" },
+        { display: "Mercedes-Benz", dbValue: "Mercedes-Benz" },
+        { display: "Audi", dbValue: "Audi" }
     ];
 
     const fuelTypes = [
@@ -90,17 +93,29 @@ const AllDeals = () => {
         { name: "Brown", className: "bg-amber-700" },
     ];
 
-    // Filter states
-    const [maxPrice, setMaxPrice] = React.useState(7000000);
-    const [selectedBrands, setSelectedBrands] = React.useState([]);
+    // Filter states (Pending/UI states)
+    const [pendingMaxPrice, setPendingMaxPrice] = React.useState(7000000);
+    const [pendingBrands, setPendingBrands] = React.useState([]);
     const [brandSearchQuery, setBrandSearchQuery] = React.useState("");
-    const [selectedYearLimit, setSelectedYearLimit] = React.useState(null);
-    const [selectedFuelTypes, setSelectedFuelTypes] = React.useState([]);
-    const [selectedBodyTypes, setSelectedBodyTypes] = React.useState([]);
-    const [selectedTransmissions, setSelectedTransmissions] = React.useState([]);
-    const [selectedOwner, setSelectedOwner] = React.useState(null);
-    const [selectedColor, setSelectedColor] = React.useState(null);
+    const [pendingYearLimit, setPendingYearLimit] = React.useState(null);
+    const [pendingFuelTypes, setPendingFuelTypes] = React.useState([]);
+    const [pendingBodyTypes, setPendingBodyTypes] = React.useState([]);
+    const [pendingTransmissions, setPendingTransmissions] = React.useState([]);
+    const [pendingOwner, setPendingOwner] = React.useState(null);
+    const [pendingColor, setPendingColor] = React.useState(null);
+
+    // Applied states (used for filtering)
+    const [appliedMaxPrice, setAppliedMaxPrice] = React.useState(7000000);
+    const [appliedBrands, setAppliedBrands] = React.useState([]);
+    const [appliedYearLimit, setAppliedYearLimit] = React.useState(null);
+    const [appliedFuelTypes, setAppliedFuelTypes] = React.useState([]);
+    const [appliedBodyTypes, setAppliedBodyTypes] = React.useState([]);
+    const [appliedTransmissions, setAppliedTransmissions] = React.useState([]);
+    const [appliedOwner, setAppliedOwner] = React.useState(null);
+    const [appliedColor, setAppliedColor] = React.useState(null);
+
     const [sortBy, setSortBy] = React.useState("Newest First");
+    const [showMobileFilters, setShowMobileFilters] = React.useState(false);
 
     // Initialize states from URL parameters
     React.useEffect(() => {
@@ -110,99 +125,119 @@ const AllDeals = () => {
         const transParam = searchParams.get("transmission");
         const bodyParam = searchParams.get("bodyType");
 
-        if (brandParam) {
-            setSelectedBrands([brandParam]);
-        } else {
-            setSelectedBrands([]);
-        }
+        const bVal = brandParam ? [brandParam] : [];
+        setPendingBrands(bVal);
+        setAppliedBrands(bVal);
 
+        let priceVal = 7000000;
         if (budgetParam) {
-            if (budgetParam.includes("Below ₹3 Lakh") || budgetParam.toLowerCase().includes("3 lakh") || budgetParam.includes("300000")) setMaxPrice(300000);
-            else if (budgetParam.includes("₹3 - ₹5 Lakh") || budgetParam.toLowerCase().includes("3 - 5") || budgetParam.includes("500000")) setMaxPrice(500000);
-            else if (budgetParam.includes("₹5 - ₹8 Lakh") || budgetParam.toLowerCase().includes("5 - 8") || budgetParam.includes("800000")) setMaxPrice(800000);
-            else if (budgetParam.includes("₹8 - ₹12 Lakh") || budgetParam.toLowerCase().includes("8 - 12") || budgetParam.includes("1200000")) setMaxPrice(1200000);
-            else if (budgetParam.includes("₹12 - ₹20 Lakh") || budgetParam.toLowerCase().includes("12 - 20") || budgetParam.includes("2000000")) setMaxPrice(2000000);
-            else if (budgetParam.includes("Above ₹20 Lakh") || budgetParam.toLowerCase().includes("above 20") || budgetParam.includes("7000000")) setMaxPrice(7000000);
-        } else {
-            setMaxPrice(7000000);
+            if (budgetParam.includes("Below ₹3 Lakh") || budgetParam.toLowerCase().includes("3 lakh") || budgetParam.includes("300000")) priceVal = 300000;
+            else if (budgetParam.includes("₹3 - ₹5 Lakh") || budgetParam.toLowerCase().includes("3 - 5") || budgetParam.includes("500000")) priceVal = 500000;
+            else if (budgetParam.includes("₹5 - ₹8 Lakh") || budgetParam.toLowerCase().includes("5 - 8") || budgetParam.includes("800000")) priceVal = 800000;
+            else if (budgetParam.includes("₹8 - ₹12 Lakh") || budgetParam.toLowerCase().includes("8 - 12") || budgetParam.includes("1200000")) priceVal = 1200000;
+            else if (budgetParam.includes("₹12 - ₹20 Lakh") || budgetParam.toLowerCase().includes("12 - 20") || budgetParam.includes("2000000")) priceVal = 2000000;
+            else if (budgetParam.includes("Above ₹20 Lakh") || budgetParam.toLowerCase().includes("above 20") || budgetParam.includes("7000000")) priceVal = 7000000;
+            else priceVal = parseInt(budgetParam, 10) || 7000000;
         }
+        setPendingMaxPrice(priceVal);
+        setAppliedMaxPrice(priceVal);
 
-        if (fuelParam) {
-            setSelectedFuelTypes([fuelParam]);
-        } else {
-            setSelectedFuelTypes([]);
-        }
+        const fVal = fuelParam ? [fuelParam] : [];
+        setPendingFuelTypes(fVal);
+        setAppliedFuelTypes(fVal);
 
-        if (transParam) {
-            setSelectedTransmissions([transParam]);
-        } else {
-            setSelectedTransmissions([]);
-        }
+        const tVal = transParam ? [transParam] : [];
+        setPendingTransmissions(tVal);
+        setAppliedTransmissions(tVal);
 
-        if (bodyParam) {
-            setSelectedBodyTypes([bodyParam]);
-        } else {
-            setSelectedBodyTypes([]);
-        }
+        const boVal = bodyParam ? [bodyParam] : [];
+        setPendingBodyTypes(boVal);
+        setAppliedBodyTypes(boVal);
+
+        setPendingYearLimit(null);
+        setAppliedYearLimit(null);
+        setPendingOwner(null);
+        setAppliedOwner(null);
+        setPendingColor(null);
+        setAppliedColor(null);
     }, [searchParams]);
 
     // Handlers
     const toggleBrand = (brand) => {
-        setSelectedBrands(prev => 
+        setPendingBrands(prev => 
             prev.includes(brand) ? prev.filter(b => b !== brand) : [...prev, brand]
         );
     };
 
     const toggleFuelType = (fuel) => {
-        setSelectedFuelTypes(prev =>
+        setPendingFuelTypes(prev =>
             prev.includes(fuel) ? prev.filter(f => f !== fuel) : [...prev, fuel]
         );
     };
 
     const toggleBodyType = (body) => {
-        setSelectedBodyTypes(prev =>
+        setPendingBodyTypes(prev =>
             prev.includes(body) ? prev.filter(b => b !== body) : [...prev, body]
         );
     };
 
     const toggleTransmission = (trans) => {
-        setSelectedTransmissions(prev =>
+        setPendingTransmissions(prev =>
             prev.includes(trans) ? prev.filter(t => t !== trans) : [...prev, trans]
         );
     };
 
     const handleReset = () => {
-        setMaxPrice(7000000);
-        setSelectedBrands([]);
+        setPendingMaxPrice(7000000);
+        setPendingBrands([]);
         setBrandSearchQuery("");
-        setSelectedYearLimit(null);
-        setSelectedFuelTypes([]);
-        setSelectedBodyTypes([]);
-        setSelectedTransmissions([]);
-        setSelectedOwner(null);
-        setSelectedColor(null);
+        setPendingYearLimit(null);
+        setPendingFuelTypes([]);
+        setPendingBodyTypes([]);
+        setPendingTransmissions([]);
+        setPendingOwner(null);
+        setPendingColor(null);
+
+        setAppliedMaxPrice(7000000);
+        setAppliedBrands([]);
+        setAppliedYearLimit(null);
+        setAppliedFuelTypes([]);
+        setAppliedBodyTypes([]);
+        setAppliedTransmissions([]);
+        setAppliedOwner(null);
+        setAppliedColor(null);
+
         setSortBy("Newest First");
         setSearchQuery("");
-        setSearchParams({});
+        setSearchParams({}, { replace: true });
     };
 
     const handleApply = () => {
         const newParams = new URLSearchParams();
-        if (selectedBrands.length > 0) newParams.set("brand", selectedBrands[0]);
+        if (pendingBrands.length > 0) newParams.set("brand", pendingBrands[0]);
         
-        if (maxPrice < 7000000) {
-            if (maxPrice === 300000) newParams.set("budget", "Below ₹3 Lakh");
-            else if (maxPrice === 500000) newParams.set("budget", "₹3 - ₹5 Lakh");
-            else if (maxPrice === 800000) newParams.set("budget", "₹5 - ₹8 Lakh");
-            else if (maxPrice === 1200000) newParams.set("budget", "₹8 - ₹12 Lakh");
-            else if (maxPrice === 2000000) newParams.set("budget", "₹12 - ₹20 Lakh");
-            else newParams.set("budget", `${maxPrice}`);
+        if (pendingMaxPrice < 7000000) {
+            if (pendingMaxPrice === 300000) newParams.set("budget", "Below ₹3 Lakh");
+            else if (pendingMaxPrice === 500000) newParams.set("budget", "₹3 - ₹5 Lakh");
+            else if (pendingMaxPrice === 800000) newParams.set("budget", "₹5 - ₹8 Lakh");
+            else if (pendingMaxPrice === 1200000) newParams.set("budget", "₹8 - ₹12 Lakh");
+            else if (pendingMaxPrice === 2000000) newParams.set("budget", "₹12 - ₹20 Lakh");
+            else newParams.set("budget", `${pendingMaxPrice}`);
         }
-        if (selectedFuelTypes.length > 0) newParams.set("fuel", selectedFuelTypes[0]);
-        if (selectedTransmissions.length > 0) newParams.set("transmission", selectedTransmissions[0]);
-        if (selectedBodyTypes.length > 0) newParams.set("bodyType", selectedBodyTypes[0]);
+        if (pendingFuelTypes.length > 0) newParams.set("fuel", pendingFuelTypes[0]);
+        if (pendingTransmissions.length > 0) newParams.set("transmission", pendingTransmissions[0]);
+        if (pendingBodyTypes.length > 0) newParams.set("bodyType", pendingBodyTypes[0]);
         
-        setSearchParams(newParams);
+        setAppliedBrands(pendingBrands);
+        setAppliedMaxPrice(pendingMaxPrice);
+        setAppliedFuelTypes(pendingFuelTypes);
+        setAppliedTransmissions(pendingTransmissions);
+        setAppliedBodyTypes(pendingBodyTypes);
+        setAppliedYearLimit(pendingYearLimit);
+        setAppliedOwner(pendingOwner);
+        setAppliedColor(pendingColor);
+
+        setSearchParams(newParams, { replace: true });
     };
 
     // Helper functions for parsing properties
@@ -233,52 +268,52 @@ const AllDeals = () => {
 
             // Price range
             const price = parsePriceNumeric(car.price);
-            if (price > maxPrice) return false;
+            if (price > appliedMaxPrice) return false;
 
             // Brand
-            if (selectedBrands.length > 0) {
-                if (!car.brand || !selectedBrands.includes(car.brand)) {
+            if (appliedBrands.length > 0) {
+                if (!car.brand || !appliedBrands.includes(car.brand)) {
                     return false;
                 }
             }
 
             // Year Limit
-            if (selectedYearLimit) {
+            if (appliedYearLimit) {
                 const carYear = parseInt(car.year, 10);
-                if (carYear < selectedYearLimit) return false;
+                if (carYear < appliedYearLimit) return false;
             }
 
             // Fuel Type
-            if (selectedFuelTypes.length > 0) {
-                if (!selectedFuelTypes.includes(car.fuel)) {
+            if (appliedFuelTypes.length > 0) {
+                if (!appliedFuelTypes.includes(car.fuel)) {
                     return false;
                 }
             }
 
             // Body Type
-            if (selectedBodyTypes.length > 0) {
-                if (!car.bodyType || !selectedBodyTypes.includes(car.bodyType)) {
+            if (appliedBodyTypes.length > 0) {
+                if (!car.bodyType || !appliedBodyTypes.includes(car.bodyType)) {
                     return false;
                 }
             }
 
             // Transmission
-            if (selectedTransmissions.length > 0) {
-                if (!selectedTransmissions.includes(car.transmission)) {
+            if (appliedTransmissions.length > 0) {
+                if (!appliedTransmissions.includes(car.transmission)) {
                     return false;
                 }
             }
 
             // Owner
-            if (selectedOwner) {
-                if (!car.owner || car.owner !== selectedOwner) {
+            if (appliedOwner) {
+                if (!car.owner || car.owner !== appliedOwner) {
                     return false;
                 }
             }
 
             // Color
-            if (selectedColor) {
-                if (!car.colorName || car.colorName !== selectedColor) {
+            if (appliedColor) {
+                if (!car.colorName || car.colorName !== appliedColor) {
                     return false;
                 }
             }
@@ -303,7 +338,201 @@ const AllDeals = () => {
             if (dateA && dateB) return dateB - dateA;
             return String(b.id).localeCompare(String(a.id));
         });
-    }, [searchQuery, maxPrice, selectedBrands, selectedYearLimit, selectedFuelTypes, selectedBodyTypes, selectedTransmissions, selectedOwner, selectedColor, sortBy]);
+    }, [searchQuery, appliedMaxPrice, appliedBrands, appliedYearLimit, appliedFuelTypes, appliedBodyTypes, appliedTransmissions, appliedOwner, appliedColor, sortBy, deals]);
+
+    const renderFilters = () => (
+        <div className="space-y-6">
+            {/* Price Range */}
+            <div>
+                <div className="mb-2 flex items-center justify-between">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                        Price Range
+                    </h3>
+                    <span className="text-xs font-bold text-gray-800 bg-gray-150 px-2 py-0.5 rounded-md">
+                        {pendingMaxPrice === 7000000 ? "Any Price" : `Up to ₹${pendingMaxPrice.toLocaleString("en-IN")}`}
+                    </span>
+                </div>
+                <input
+                    type="range"
+                    min="50000"
+                    max="7000000"
+                    step="50000"
+                    value={pendingMaxPrice}
+                    onChange={(e) => setPendingMaxPrice(parseInt(e.target.value, 10))}
+                    className="w-full cursor-pointer accent-gray-600"
+                />
+                <div className="mt-1.5 flex justify-between text-xs font-semibold text-gray-500">
+                    <span>₹50,000</span>
+                    <span>₹70,00,000</span>
+                </div>
+            </div>
+
+            <hr className="border-gray-100" />
+
+            {/* Brands */}
+            <div>
+                <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                    Brands
+                </h3>
+                <input
+                    type="text"
+                    value={brandSearchQuery}
+                    onChange={(e) => setBrandSearchQuery(e.target.value)}
+                    placeholder="Search Brand..."
+                    className="mb-3 w-full rounded-lg border border-gray-200 px-3 py-1.5 text-xs text-gray-800 placeholder-gray-400 outline-none focus:border-gray-400 transition"
+                />
+                <div className="space-y-2 max-h-40 overflow-y-auto text-xs font-medium text-gray-700 scrollbar-thin">
+                    {displayBrands
+                        .filter(b => b.display.toLowerCase().includes(brandSearchQuery.toLowerCase()))
+                        .map((brand) => (
+                            <label key={brand.dbValue} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
+                                <input 
+                                    type="checkbox" 
+                                    checked={pendingBrands.includes(brand.dbValue)}
+                                    onChange={() => toggleBrand(brand.dbValue)}
+                                    className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
+                                />
+                                <span>{brand.display}</span>
+                            </label>
+                        ))}
+                </div>
+            </div>
+
+            <hr className="border-gray-100" />
+
+            {/* Year */}
+            <div>
+                <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                    Year
+                </h3>
+                <div className="space-y-2 text-xs font-medium text-gray-700">
+                    {years.map((yearStr) => {
+                        const yearVal = parseInt(yearStr, 10);
+                        return (
+                            <label key={yearStr} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
+                                <input 
+                                    type="radio" 
+                                    name="year" 
+                                    checked={pendingYearLimit === yearVal}
+                                    onChange={() => setPendingYearLimit(yearVal)}
+                                    className="border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
+                                />
+                                <span>{yearStr}</span>
+                            </label>
+                        );
+                    })}
+                </div>
+            </div>
+
+            <hr className="border-gray-100" />
+
+            {/* Fuel Type */}
+            <div>
+                <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                    Fuel Type
+                </h3>
+                <div className="space-y-2 text-xs font-medium text-gray-700">
+                    {fuelTypes.map((fuel) => (
+                        <label key={fuel} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
+                            <input 
+                                type="checkbox" 
+                                checked={pendingFuelTypes.includes(fuel)}
+                                onChange={() => toggleFuelType(fuel)}
+                                className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
+                            />
+                            <span>{fuel}</span>
+                        </label>
+                    ))}
+                </div>
+            </div>
+
+            <hr className="border-gray-100" />
+
+            {/* Body Type */}
+            <div>
+                <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                    Body Type
+                </h3>
+                <div className="space-y-2 text-xs font-medium text-gray-700">
+                    {bodyTypes.map((body) => (
+                        <label key={body} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
+                            <input 
+                                type="checkbox" 
+                                checked={pendingBodyTypes.includes(body)}
+                                onChange={() => toggleBodyType(body)}
+                                className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
+                            />
+                            <span>{body}</span>
+                        </label>
+                    ))}
+                </div>
+            </div>
+
+            <hr className="border-gray-100" />
+
+            {/* Transmission */}
+            <div>
+                <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                    Transmission
+                </h3>
+                <div className="space-y-2 text-xs font-medium text-gray-700">
+                    {transmissions.map((item) => (
+                        <label key={item} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
+                            <input 
+                                type="checkbox" 
+                                checked={pendingTransmissions.includes(item)}
+                                onChange={() => toggleTransmission(item)}
+                                className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
+                            />
+                            <span>{item}</span>
+                        </label>
+                    ))}
+                </div>
+            </div>
+
+            <hr className="border-gray-100" />
+
+            {/* Owner */}
+            <div>
+                <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                    Owner
+                </h3>
+                <div className="space-y-2 text-xs font-medium text-gray-700">
+                    {owners.map((owner) => (
+                        <label key={owner} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
+                            <input 
+                                type="radio" 
+                                name="owner" 
+                                checked={pendingOwner === owner}
+                                onChange={() => setPendingOwner(owner)}
+                                className="border-gray-350 bg-white text-gray-600 focus:ring-gray-400 cursor-pointer" 
+                            />
+                            <span>{owner}</span>
+                        </label>
+                    ))}
+                </div>
+            </div>
+
+            <hr className="border-gray-100" />
+
+            {/* Color */}
+            <div>
+                <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
+                    Color
+                </h3>
+                <div className="flex flex-wrap gap-2.5">
+                    {colors.map((color) => (
+                        <button
+                            key={color.name}
+                            title={color.name}
+                            onClick={() => setPendingColor(pendingColor === color.name ? null : color.name)}
+                            className={`h-6 w-6 rounded-full border shadow-sm cursor-pointer hover:scale-110 transition ${color.className} ${pendingColor === color.name ? "ring-2 ring-gray-900 ring-offset-2 scale-110" : "border-gray-200"}`}
+                        ></button>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
 
     if (loading) {
         return (
@@ -315,10 +544,21 @@ const AllDeals = () => {
 
     return (
         <>
-            <NavbarSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+            <NavbarSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} hideLinks={true} />
             <section className="bg-[#f6f7fb] min-h-screen py-8 text-gray-900">
                 <div className="max-w-7xl mx-auto px-6">
                     
+                    {/* Back Button */}
+                    <div className="mb-4">
+                        <button 
+                            onClick={() => navigate(-1)} 
+                            className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-bold text-gray-700 shadow-sm hover:bg-gray-100 transition cursor-pointer"
+                        >
+                            <FaArrowLeft className="text-[10px]" />
+                            Back
+                        </button>
+                    </div>
+
                     {/* Header Navigation & Title */}
                     <div className="mb-8">
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -335,21 +575,30 @@ const AllDeals = () => {
                             </div>
 
                             {/* Top Bar Stats & Sort */}
-                            <div className="flex items-center gap-4 self-start md:self-end">
+                            <div className="flex items-center gap-4 self-start md:self-end w-full md:w-auto justify-between md:justify-end">
                                 <p className="text-sm text-gray-500 font-medium whitespace-nowrap">
                                     {filteredDeals.length} Deals Found
                                 </p>
-                                <select 
-                                    value={sortBy}
-                                    onChange={(e) => setSortBy(e.target.value)}
-                                    className="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 outline-none hover:bg-gray-50 transition shadow-sm cursor-pointer"
-                                >
-                                    <option>Newest First</option>
-                                    <option>Price: Low to High</option>
-                                    <option>Price: High to Low</option>
-                                    <option>Year: Newest</option>
-                                    <option>KMs Driven</option>
-                                </select>
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={() => setShowMobileFilters(true)}
+                                        className="lg:hidden flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 outline-none hover:bg-gray-50 transition shadow-sm cursor-pointer"
+                                    >
+                                        <FaFilter className="text-gray-500" />
+                                        <span>Filters</span>
+                                    </button>
+                                    <select 
+                                        value={sortBy}
+                                        onChange={(e) => setSortBy(e.target.value)}
+                                        className="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 outline-none hover:bg-gray-50 transition shadow-sm cursor-pointer"
+                                    >
+                                        <option>Newest First</option>
+                                        <option>Price: Low to High</option>
+                                        <option>Price: High to Low</option>
+                                        <option>Year: Newest</option>
+                                        <option>KMs Driven</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -357,203 +606,15 @@ const AllDeals = () => {
                     {/* Main Layout Grid */}
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                         
-                        {/* ================= LEFT FILTERS SIDEBAR ================= */}
-                        <div className="lg:col-span-1">
+                        {/* ================= LEFT FILTERS SIDEBAR (DESKTOP) ================= */}
+                        <div className="hidden lg:block lg:col-span-1">
                             <div className="sticky top-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                                 <h2 className="mb-4 text-lg font-bold text-gray-900">
                                     Filters
                                 </h2>
 
-                                <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-1">
-                                    {/* Price Range */}
-                                    <div>
-                                        <div className="mb-2 flex items-center justify-between">
-                                            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">
-                                                Price Range
-                                            </h3>
-                                            <span className="text-xs font-bold text-gray-800 bg-gray-150 px-2 py-0.5 rounded-md">
-                                                {maxPrice === 7000000 ? "Any Price" : `Up to ₹${maxPrice.toLocaleString("en-IN")}`}
-                                            </span>
-                                        </div>
-                                        <input
-                                            type="range"
-                                            min="50000"
-                                            max="7000000"
-                                            step="50000"
-                                            value={maxPrice}
-                                            onChange={(e) => setMaxPrice(parseInt(e.target.value, 10))}
-                                            className="w-full cursor-pointer accent-gray-600"
-                                        />
-                                        <div className="mt-1.5 flex justify-between text-xs font-semibold text-gray-500">
-                                            <span>₹50,000</span>
-                                            <span>₹70,00,000</span>
-                                        </div>
-                                    </div>
-
-                                    <hr className="border-gray-100" />
-
-                                    {/* Brands */}
-                                    <div>
-                                        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
-                                            Brands
-                                        </h3>
-                                        <input
-                                            type="text"
-                                            value={brandSearchQuery}
-                                            onChange={(e) => setBrandSearchQuery(e.target.value)}
-                                            placeholder="Search Brand..."
-                                            className="mb-3 w-full rounded-lg border border-gray-200 px-3 py-1.5 text-xs text-gray-800 placeholder-gray-400 outline-none focus:border-gray-400 transition"
-                                        />
-                                        <div className="space-y-2 max-h-40 overflow-y-auto text-xs font-medium text-gray-700 scrollbar-thin">
-                                            {brands
-                                                .filter(b => b.toLowerCase().includes(brandSearchQuery.toLowerCase()))
-                                                .map((brand) => (
-                                                    <label key={brand} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
-                                                        <input 
-                                                            type="checkbox" 
-                                                            checked={selectedBrands.includes(brand)}
-                                                            onChange={() => toggleBrand(brand)}
-                                                            className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
-                                                        />
-                                                        <span>{brand}</span>
-                                                    </label>
-                                                ))}
-                                        </div>
-                                    </div>
-
-                                    <hr className="border-gray-100" />
-
-                                    {/* Year */}
-                                    <div>
-                                        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
-                                            Year
-                                        </h3>
-                                        <div className="space-y-2 text-xs font-medium text-gray-700">
-                                            {years.map((yearStr) => {
-                                                const yearVal = parseInt(yearStr, 10);
-                                                return (
-                                                    <label key={yearStr} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
-                                                        <input 
-                                                            type="radio" 
-                                                            name="year" 
-                                                            checked={selectedYearLimit === yearVal}
-                                                            onChange={() => setSelectedYearLimit(yearVal)}
-                                                            className="border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
-                                                        />
-                                                        <span>{yearStr}</span>
-                                                    </label>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-
-                                    <hr className="border-gray-100" />
-
-                                    {/* Fuel Type */}
-                                    <div>
-                                        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
-                                            Fuel Type
-                                        </h3>
-                                        <div className="space-y-2 text-xs font-medium text-gray-700">
-                                            {fuelTypes.map((fuel) => (
-                                                <label key={fuel} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
-                                                    <input 
-                                                        type="checkbox" 
-                                                        checked={selectedFuelTypes.includes(fuel)}
-                                                        onChange={() => toggleFuelType(fuel)}
-                                                        className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
-                                                    />
-                                                    <span>{fuel}</span>
-                                                </label>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <hr className="border-gray-100" />
-
-                                    {/* Body Type */}
-                                    <div>
-                                        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
-                                            Body Type
-                                        </h3>
-                                        <div className="space-y-2 text-xs font-medium text-gray-700">
-                                            {bodyTypes.map((body) => (
-                                                <label key={body} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
-                                                    <input 
-                                                        type="checkbox" 
-                                                        checked={selectedBodyTypes.includes(body)}
-                                                        onChange={() => toggleBodyType(body)}
-                                                        className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
-                                                    />
-                                                    <span>{body}</span>
-                                                </label>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <hr className="border-gray-100" />
-
-                                    {/* Transmission */}
-                                    <div>
-                                        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
-                                            Transmission
-                                        </h3>
-                                        <div className="space-y-2 text-xs font-medium text-gray-700">
-                                            {transmissions.map((item) => (
-                                                <label key={item} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
-                                                    <input 
-                                                        type="checkbox" 
-                                                        checked={selectedTransmissions.includes(item)}
-                                                        onChange={() => toggleTransmission(item)}
-                                                        className="rounded-sm border-gray-300 text-gray-600 focus:ring-gray-400 cursor-pointer" 
-                                                    />
-                                                    <span>{item}</span>
-                                                </label>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <hr className="border-gray-100" />
-
-                                    {/* Owner */}
-                                    <div>
-                                        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
-                                            Owner
-                                        </h3>
-                                        <div className="space-y-2 text-xs font-medium text-gray-700">
-                                            {owners.map((owner) => (
-                                                <label key={owner} className="flex items-center gap-2.5 cursor-pointer hover:text-gray-955 transition">
-                                                    <input 
-                                                        type="radio" 
-                                                        name="owner" 
-                                                        checked={selectedOwner === owner}
-                                                        onChange={() => setSelectedOwner(owner)}
-                                                        className="border-gray-305 bg-white text-gray-600 focus:ring-gray-400 cursor-pointer" 
-                                                    />
-                                                    <span>{owner}</span>
-                                                </label>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <hr className="border-gray-100" />
-
-                                    {/* Color */}
-                                    <div>
-                                        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-gray-400">
-                                            Color
-                                        </h3>
-                                        <div className="flex flex-wrap gap-2.5">
-                                            {colors.map((color) => (
-                                                <button
-                                                    key={color.name}
-                                                    title={color.name}
-                                                    onClick={() => setSelectedColor(selectedColor === color.name ? null : color.name)}
-                                                    className={`h-6 w-6 rounded-full border shadow-sm cursor-pointer hover:scale-110 transition ${color.className} ${selectedColor === color.name ? "ring-2 ring-gray-900 ring-offset-2 scale-110" : "border-gray-200"}`}
-                                                ></button>
-                                            ))}
-                                        </div>
-                                    </div>
+                                <div className="max-h-[70vh] overflow-y-auto pr-1">
+                                    {renderFilters()}
                                 </div>
 
                                 {/* Reset / Apply Buttons */}
@@ -612,6 +673,9 @@ const AllDeals = () => {
                                             {/* Content Section */}
                                             <div className="p-4 flex flex-col justify-between flex-grow">
                                                 <div>
+                                                    <p className="text-[10px] font-bold text-red-650 uppercase tracking-wider mb-1">
+                                                        {car.brand} {car.model && `• ${car.model}`}
+                                                    </p>
                                                     <h3 className="truncate text-base font-bold text-gray-900 leading-snug">
                                                         {car.name}
                                                     </h3>
@@ -665,6 +729,60 @@ const AllDeals = () => {
                     </div>
                 </div>
             </section>
+
+            {/* ================= MOBILE FILTERS DRAWER ================= */}
+            {showMobileFilters && (
+                <div className="fixed inset-0 z-50 flex justify-end lg:hidden">
+                    {/* Backdrop */}
+                    <div 
+                        className="fixed inset-0 bg-black/50 transition-opacity" 
+                        onClick={() => setShowMobileFilters(false)}
+                    />
+                    
+                    {/* Drawer container */}
+                    <div className="relative z-10 w-full max-w-sm bg-white p-6 shadow-2xl flex flex-col h-full animate-slide-left">
+                        <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-4 shrink-0">
+                            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                <FaFilter />
+                                <span>Filters</span>
+                            </h2>
+                            <button
+                                onClick={() => setShowMobileFilters(false)}
+                                className="p-2 -mr-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition cursor-pointer"
+                            >
+                                <FaTimes size={18} />
+                            </button>
+                        </div>
+                        
+                        {/* Filters list scroll container */}
+                        <div className="grow overflow-y-auto pr-1">
+                            {renderFilters()}
+                        </div>
+                        
+                        {/* Reset / Apply Buttons */}
+                        <div className="mt-6 flex gap-3 pt-4 border-t border-gray-100 shrink-0">
+                            <button
+                                onClick={() => {
+                                    handleReset();
+                                    setShowMobileFilters(false);
+                                }}
+                                className="flex-1 rounded-xl border border-gray-200 py-3 text-xs font-bold text-gray-650 hover:bg-gray-50 transition cursor-pointer"
+                            >
+                                Reset
+                            </button>
+                            <button
+                                onClick={() => {
+                                    handleApply();
+                                    setShowMobileFilters(false);
+                                }}
+                                className="flex-1 rounded-xl bg-gray-900 py-3 text-xs font-bold text-white hover:bg-gray-800 transition shadow-sm cursor-pointer"
+                            >
+                                Apply
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 };
