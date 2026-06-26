@@ -5,10 +5,6 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.css";
-import { seedDatabaseIfNeeded } from "./services/dbSeeder";
-
-// Trigger Firestore seeding on app load (Disabled so empty databases remain empty)
-// seedDatabaseIfNeeded();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
