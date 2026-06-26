@@ -89,7 +89,7 @@ const AdminLogin = () => {
           </div>
           <div>
             <h2 className="text-xl font-bold leading-none text-white tracking-tight">
-              Budget Car
+              BudgetCarHub
             </h2>
             <p className="uppercase text-[9px] tracking-[2px] text-gray-500 font-bold mt-1">
               Admin Portal
@@ -101,7 +101,7 @@ const AdminLogin = () => {
           Welcome Back
         </h1>
         <p className="text-sm text-gray-400 text-center mb-8">
-          Sign in to manage your budget car inventory.
+          Sign in to manage your BudgetCarHub inventory.
         </p>
 
         {/* Error Message */}

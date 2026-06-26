@@ -288,6 +288,7 @@ const EditCar = () => {
         image: finalImageUrl,
         gallery: finalGalleryUrls,
         video: finalVideoUrl,
+        adminAdded: true,
         updatedAt: serverTimestamp()
       };
 

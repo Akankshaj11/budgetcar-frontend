@@ -40,7 +40,7 @@ const CarDetailPage = () => {
     const loadCar = async () => {
       try {
         const snap = await getDoc(doc(db, "cars", id));
-        if (snap.exists()) {
+        if (snap.exists() && snap.data().adminAdded === true) {
           setCar({
             id: snap.id,
             ...snap.data(),
@@ -506,12 +506,12 @@ const CarDetailPage = () => {
                   Make Your Offer
                 </a>
                 <a 
-                  href={`https://wa.me/919922801959?text=Hi, I am interested in the ${car.brand || ""} ${car.name || ""} (${car.year || ""}) listed on Budget Car.`} 
+                  href={`https://wa.me/919922801959?text=Hi, I am interested in the ${car.brand || ""} ${car.name || ""} (${car.year || ""}) listed on BudgetCarHub.`} 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="flex-1 border border-gray-250 py-3 rounded-xl flex items-center justify-center gap-1.5 font-bold hover:bg-gray-50 transition text-xs md:text-sm text-gray-700 cursor-pointer"
                 >
-                  <FaWhatsapp className="text-green-500 text-base" /> 
+                  <FaWhatsapp className="text-gray-750 text-base" /> 
                   WhatsApp
                 </a>
               </div>

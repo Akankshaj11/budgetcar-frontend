@@ -65,16 +65,16 @@ const Footer = () => {
                             <span className="text-white">🚗</span>
                         </div>
                         <div>
-                            <h2 className="text-white font-bold text-lg">Budget Car</h2>
+                            <h2 className="text-white font-bold text-lg">BudgetCarHub</h2>
                             <p className="text-[10px] uppercase tracking-widest text-gray-500">TRUSTED CARS</p>
                         </div>
                     </div>
                     <p className="text-sm mb-8 leading-relaxed">
-                        Pune's most trusted second-hand car dealership since 2012. Budget Car makes buying and selling easy.
+                        Pune's most trusted second-hand car dealership since 2012. BudgetCarHub makes buying and selling easy.
                     </p>
                     <div className="flex gap-3">
                         <a 
-                            href="https://www.instagram.com/pratikshah7171?igsh=MWVnbWhzbWMxajhzOA==" 
+                            href="https://www.instagram.com/budgetcarhub?igsh=MW96bmNjaHU0M2Z5bA==" 
                             target="_blank" 
                             rel="noopener noreferrer" 
                             className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center hover:bg-white hover:text-black transition-colors"
@@ -125,8 +125,8 @@ const Footer = () => {
                     <ul className="space-y-4 text-md">
                         <li className="flex gap-3"><FaMapMarkerAlt className="mt-1 shrink-0" /> Sr.No 30, Pune Nagar Rd, opp. Canara Bank, Viman Nagar, Pune 411014</li>
                         <li className="flex gap-3"><FaPhone className="mt-1 shrink-0" /> +91 99228 01959</li>
-                        <li className="flex gap-3"><FaWhatsapp className="mt-1 shrink-0" /> WhatsApp: <a href="https://wa.me/919922801959" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors underline">wa.me</a></li>
-                        <li className="flex gap-3"><FaEnvelope className="mt-1 shrink-0" /> budgetcar.pune@gmail.com</li>
+                        {/* <li className="flex gap-3"><FaWhatsapp className="mt-1 shrink-0" /> WhatsApp: <a href="https://wa.me/919922801959" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors underline">wa.me</a></li> */}
+                        <li className="flex gap-3"><FaEnvelope className="mt-1 shrink-0" /> budgetcar.hub.pune01@gmail.com</li>
                         <li className="flex gap-3"><FaClock className="mt-1 shrink-0" /> Mon–Sat: 10 AM – 8 PM | Sun: 10 AM – 6 PM</li>
                     </ul>
                 </div>
@@ -134,7 +134,11 @@ const Footer = () => {
 
             {/* Bottom Bar */}
             <div className="max-w-7xl mx-auto px-6 border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-600 gap-4">
-                <p>&copy; 2024 Budget Car. All rights reserved. | A Trusted Name in Pune.</p>
+                <div className="flex flex-col gap-1 items-center md:items-start">
+                    <p>&copy; 2026 BudgetCarHub. All rights reserved.</p>
+                    <p className="text-xs text-gray-500 font-medium">Designed by Softtrades Technology Pvt. Ltd.</p>
+                </div>
+                
                 <div className="flex gap-6">
                     <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
                     <Link to="/terms-of-use" className="hover:text-white transition-colors">Terms of Use</Link>

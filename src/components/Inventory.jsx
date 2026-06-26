@@ -36,10 +36,6 @@ const Inventory = () => {
     // Filter out discounted cars from normal inventory
     const regularCars = cars.filter(car => !car.isDiscount);
 
-    if (regularCars.length === 0) {
-        return null;
-    }
-
     return (
         <section id="inventory" className="bg-white py-5">
             <div className="max-w-7xl mx-auto px-6">
@@ -66,53 +62,71 @@ const Inventory = () => {
                     </button>
                 </div>
 
-                {/* Cars Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    {regularCars.map((car) => (
-                        <div
-                            key={car.id}
-                            className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
+                {/* Cars Grid / Empty State */}
+                {regularCars.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-16 px-4 border border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
+                        <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-450 mb-4 text-2xl shadow-xs">
+                            🚗
+                        </div>
+                        <p className="text-gray-900 font-bold text-lg mb-1">No Cars in Inventory</p>
+                        <p className="text-gray-500 text-sm text-center max-w-sm mb-6">
+                            We are currently updating our collection with fresh certified cars. Check back soon or contact us for immediate requirements!
+                        </p>
+                        <button 
+                            onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                            className="px-6 py-3 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition shadow-sm cursor-pointer"
                         >
-                            {/* Image Container */}
-                            <div className="relative">
-                                <img
-                                    src={car.image}
-                                    alt={car.name}
-                                    className="h-35 w-full object-cover"
-                                />
-                                <span
-                                    className={`absolute left-3 top-3 px-2 py-1 text-[10px] font-bold text-white rounded-md ${car.color}`}
-                                >
-                                    {car.badge}
-                                </span>
-                            </div>
-
-                            {/* Card Details */}
-                            <div className="p-3">
-                                <p className="text-[10px] font-bold text-red-650 uppercase tracking-wider mb-0.5">
-                                    {car.brand} {car.model && `• ${car.model}`}
-                                </p>
-                                <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">{car.name}</h3>
-                                <p className="font-bold text-gray-900 text-md mb-2">
-                                    ₹{Number(car.price).toLocaleString("en-IN")}
-                                </p>
-
-                                <div className="grid grid-cols-2 gap-y-2 text-xs text-gray-500 mb-3">
-                                    <div className="flex items-center gap-1.5"><FaCalendarAlt className="text-gray-400" /> {car.year}</div>
-                                    <div className="flex items-center gap-1.5"><FaRoad className="text-gray-400" /> {car.kms}</div>
-                                    <div className="flex items-center gap-1.5"><FaGasPump className="text-gray-400" /> {car.fuel}</div>
-                                    <div className="flex items-center gap-1.5"><FaCog className="text-gray-400" /> {car.transmission}</div>
+                            Enquire Now
+                        </button>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                        {regularCars.map((car) => (
+                            <div
+                                key={car.id}
+                                className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300"
+                            >
+                                {/* Image Container */}
+                                <div className="relative">
+                                    <img
+                                        src={car.image}
+                                        alt={car.name}
+                                        className="h-35 w-full object-cover"
+                                    />
+                                    <span
+                                        className={`absolute left-3 top-3 px-2 py-1 text-[10px] font-bold text-white rounded-md ${car.color}`}
+                                    >
+                                        {car.badge}
+                                    </span>
                                 </div>
 
-                                <button onClick={() => {
-                                    navigate(`/car/${car.id}`);
-                                }} className="w-full py-2 bg-gray-100 text-gray-900 text-sm font-semibold rounded-lg transition-all duration-300 hover:bg-[#2b2b2b] hover:text-white">
-                                    View Details
-                                </button>
+                                {/* Card Details */}
+                                <div className="p-3">
+                                    <p className="text-[10px] font-bold text-red-650 uppercase tracking-wider mb-0.5">
+                                        {car.brand} {car.model && `• ${car.model}`}
+                                    </p>
+                                    <h3 className="font-semibold text-gray-900 text-sm mb-1 truncate">{car.name}</h3>
+                                    <p className="font-bold text-gray-900 text-md mb-2">
+                                        ₹{Number(car.price).toLocaleString("en-IN")}
+                                    </p>
+
+                                    <div className="grid grid-cols-2 gap-y-2 text-xs text-gray-500 mb-3">
+                                        <div className="flex items-center gap-1.5"><FaCalendarAlt className="text-gray-400" /> {car.year}</div>
+                                        <div className="flex items-center gap-1.5"><FaRoad className="text-gray-400" /> {car.kms}</div>
+                                        <div className="flex items-center gap-1.5"><FaGasPump className="text-gray-400" /> {car.fuel}</div>
+                                        <div className="flex items-center gap-1.5"><FaCog className="text-gray-400" /> {car.transmission}</div>
+                                    </div>
+
+                                    <button onClick={() => {
+                                        navigate(`/car/${car.id}`);
+                                    }} className="w-full py-2 bg-gray-100 text-gray-900 text-sm font-semibold rounded-lg transition-all duration-300 hover:bg-[#2b2b2b] hover:text-white">
+                                        View Details
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </section>
     );

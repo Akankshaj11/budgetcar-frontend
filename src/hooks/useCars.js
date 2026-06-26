@@ -10,10 +10,12 @@ const useCars = () => {
     const unsubscribe = onSnapshot(
       collection(db, "cars"),
       (snapshot) => {
-        const carsData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const carsData = snapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .filter((car) => car.adminAdded === true);
 
         setCars(carsData);
         setLoading(false);

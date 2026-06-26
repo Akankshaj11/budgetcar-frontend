@@ -59,10 +59,6 @@ const Gallery = () => {
         return null;
     }
 
-    if (aggregatedItems.length === 0) {
-        return null;
-    }
-
     return (
         <section className="bg-[#f9f9f9] py-16 text-gray-955 overflow-hidden">
             <div className="max-w-7xl mx-auto px-6">

@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
+import WhatsAppButton from "./components/WhatsAppButton";
 
 import Home from "./pages/Home";
 import CarDetailPage from "./pages/CarDetailPage";
@@ -18,6 +19,7 @@ const App = () => {
   return (
     <>
       <ScrollToTop />
+      <WhatsAppButton />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/all-cars" element={<AllCars />} />

@@ -102,7 +102,7 @@ const Navbar = () => {
                     isSolid ? "text-gray-900" : "text-white"
                   }`}
                 >
-                  Budget Car
+                  BudgetCarHub
                 </h2>
 
                 <p

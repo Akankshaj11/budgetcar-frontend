@@ -1,6 +1,6 @@
-# BudgetCar
+# BudgetCarHub
 
-A modern marketplace for buying and selling certified pre-owned vehicles. BudgetCar delivers a fast, secure, and responsive experience for customers while providing administrators with a powerful inventory management system.
+A modern marketplace for buying and selling certified pre-owned vehicles. BudgetCarHub delivers a fast, secure, and responsive experience for customers while providing administrators with a powerful inventory management system.
 
 Designed with a focus on performance, usability, and scalability, the platform enables real-time vehicle management, dynamic search, advanced filtering, and seamless image handling.
 

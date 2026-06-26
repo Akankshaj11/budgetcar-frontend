@@ -35,7 +35,7 @@ const NavbarSearch = ({ searchQuery, setSearchQuery, hideLinks = false }) => {
               </div>
               <div>
                 <h2 className="text-xl font-bold leading-none text-gray-900">
-                  Budget Car
+                  BudgetCarHub
                 </h2>
                 <p className="uppercase text-[9px] tracking-[1.5px] text-gray-500 font-semibold mt-0.5">
                   Trusted Cars

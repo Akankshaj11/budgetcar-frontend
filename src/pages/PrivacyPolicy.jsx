@@ -34,7 +34,7 @@ const PrivacyPolicy = () => {
                             1. Introduction
                         </h2>
                         <p className="text-gray-650 text-md">
-                            Welcome to <strong>Budget Car</strong> ("we," "our," or "us"). We are committed to protecting your personal information and your right to privacy. If you have any questions or concerns about this privacy notice or our practices regarding your personal information, please contact us at <a href="mailto:budgetcar.pune@gmail.com" className="text-red-650 hover:underline">budgetcar.pune@gmail.com</a>.
+                            Welcome to <strong>BudgetCarHub</strong> ("we," "our," or "us"). We are committed to protecting your personal information and your right to privacy. If you have any questions or concerns about this privacy notice or our practices regarding your personal information, please contact us at <a href="mailto:budgetcar.hub.pune01@gmail.com" className="text-red-650 hover:underline">budgetcar.hub.pune01@gmail.com</a>.
                         </p>
                     </section>
 
@@ -108,10 +108,10 @@ const PrivacyPolicy = () => {
                             If you have questions or comments about this policy, you may contact us at:
                         </p>
                         <div className="bg-gray-50 border border-gray-150 p-6 rounded-xl space-y-2 text-sm text-gray-750">
-                            <p className="font-bold text-gray-900 text-base">Budget Car Pune</p>
+                            <p className="font-bold text-gray-900 text-base">BudgetCarHub Pune</p>
                             <p><strong>Address:</strong> Sr.No 30, Pune Nagar Rd, opp. Canara Bank, Viman Nagar, Pune 411014</p>
                             <p><strong>Phone:</strong> +91 99228 01959</p>
-                            <p><strong>Email:</strong> budgetcar.pune@gmail.com</p>
+                            <p><strong>Email:</strong> budgetcar.hub.pune01@gmail.com</p>
                         </div>
                     </section>
 

@@ -210,6 +210,7 @@ const AddCar = () => {
         await addDoc(collection(db, "cars"), {
           ...newDeal,
           isDiscount: true,
+          adminAdded: true,
           createdAt: serverTimestamp(),
         });
 
@@ -241,6 +242,7 @@ const AddCar = () => {
 
         await addDoc(collection(db, "cars"), {
           ...newCar,
+          adminAdded: true,
           createdAt: serverTimestamp(),
         });
       }

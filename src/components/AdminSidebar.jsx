@@ -65,7 +65,7 @@ const AdminSidebar = ({ activeTab }) => {
               <FaCarSide size={16} />
             </div>
             <div>
-              <h2 className="text-md font-bold text-white leading-none">BudgetCar</h2>
+              <h2 className="text-md font-bold text-white leading-none">BudgetCarHub</h2>
               <span className="text-[9px] uppercase font-bold text-gray-500 tracking-[1.5px] mt-1 block">Admin Control</span>
             </div>
           </div>

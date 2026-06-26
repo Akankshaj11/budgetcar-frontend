@@ -65,11 +65,11 @@ const Contact = () => {
                         {/* Map Height */}
                         <div className="h-48 bg-gray-200 rounded-2xl overflow-hidden shrink-0 border border-gray-100 shadow-inner">
                             <iframe 
-                                src="https://maps.google.com/maps?q=Sr.No%2030,%20Pune%20Nagar%20Rd,%20opp.%20Canara%20Bank,%20Viman%20Nagar,%20Pune%20411014&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                                src="https://maps.google.com/maps?q=18.5568421,73.9078475&t=&z=15&ie=UTF8&iwloc=&output=embed" 
                                 className="w-full h-full border-0" 
                                 allowFullScreen="" 
                                 loading="lazy" 
-                                title="Budget Car Pune Location Map"
+                                title="Budget Car Hub Pune Location Map"
                             ></iframe>
                         </div>
                         
@@ -80,7 +80,7 @@ const Contact = () => {
                                 <div>
                                     <h4 className="font-bold text-xs uppercase mb-1">Address</h4>
                                     <p className="text-sm text-gray-600 mb-2">Sr.No 30, Pune Nagar Rd, near Ramwadi Bus Stop, opp. Canara Bank, Sakore Nagar, Viman Nagar, Pune 411014</p>
-                                    <a href="#" className="text-sm font-semibold hover:underline">Get Directions</a>
+                                    <a href="https://www.google.com/maps/search/?api=1&query=18.5568421,73.9078475" target="_blank" rel="noopener noreferrer" className="text-sm font-semibold hover:underline">Get Directions</a>
                                 </div>
                             </div>
                             <div className="bg-gray-50 p-5 rounded-2xl flex gap-3">
@@ -103,8 +103,8 @@ const Contact = () => {
                                 <FaEnvelope className="text-gray-400 mt-1 shrink-0" />
                                 <div>
                                     <h4 className="font-bold text-xs uppercase mb-1">Email</h4>
-                                    <p className="text-sm text-gray-600 mb-2">budgetcar.pune@gmail.com</p>
-                                    <a href="mailto:budgetcar.pune@gmail.com" className="text-sm font-semibold hover:underline">Send Mail</a>
+                                    <p className="text-sm text-gray-600 mb-2">budgetcar.hub.pune01@gmail.com</p>
+                                    <a href="mailto:budgetcar.hub.pune01@gmail.com" className="text-sm font-semibold hover:underline">Send Mail</a>
                                 </div>
                             </div>
                         </div>
