@@ -671,7 +671,7 @@ const AllDeals = () => {
                                             </div>
 
                                             {/* Content Section */}
-                                            <div className="p-4 flex flex-col justify-between flex-grow">
+                                            <div className="p-4 flex flex-col justify-between grow">
                                                 <div>
                                                     <p className="text-[10px] font-bold text-red-650 uppercase tracking-wider mb-1">
                                                         {car.brand} {car.model && `• ${car.model}`}

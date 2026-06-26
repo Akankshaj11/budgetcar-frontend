@@ -136,9 +136,8 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto px-6 border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-600 gap-4">
                 <p>&copy; 2024 Budget Car. All rights reserved. | A Trusted Name in Pune.</p>
                 <div className="flex gap-6">
-                    <a href="#" className="hover:text-white">Privacy Policy</a>
-                    <a href="#" className="hover:text-white">Terms of Use</a>
-                    <a href="#" className="hover:text-white">Sitemap</a>
+                    <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+                    <Link to="/terms-of-use" className="hover:text-white transition-colors">Terms of Use</Link>
                     <Link to="/admin/login" className="hover:text-white transition-colors font-medium">Admin</Link>
                 </div>
             </div>

@@ -347,7 +347,7 @@ const EditCar = () => {
       <AdminSidebar activeTab="manage" />
 
       {/* Main Content Area */}
-      <section className="flex-grow flex flex-col overflow-y-auto">
+      <section className="grow flex flex-col overflow-y-auto">
         
         <header className="h-20 border-b border-white/5 px-8 flex items-center justify-between shrink-0">
           <h1 className="text-lg font-bold text-white pl-12 md:pl-0">Edit Vehicle Details</h1>
@@ -357,7 +357,7 @@ const EditCar = () => {
         </header>
 
         {/* Form Container */}
-        <div className="p-8 max-w-4xl flex-grow space-y-6">
+        <div className="p-8 max-w-4xl grow space-y-6">
           
           {successMsg && (
             <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold flex items-center gap-2">
@@ -368,7 +368,7 @@ const EditCar = () => {
           <form onSubmit={handleSave} className="space-y-8">
             
             {/* ================= SECTION 1: BASIC INFORMATION ================= */}
-            <div className="bg-white/[0.02] border border-white/[0.06] rounded-3xl p-8 shadow-xl space-y-6">
+            <div className="bg-white/2 border border-white/6 rounded-3xl p-8 shadow-xl space-y-6">
               <div className="flex items-center gap-2.5 pb-3 border-b border-white/5">
                 <FaCar className="text-white/60" size={16} />
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider">
@@ -385,7 +385,7 @@ const EditCar = () => {
                     placeholder="e.g. Maruti Suzuki Swift VXi"
                     value={carName}
                     onChange={(e) => setCarName(e.target.value)}
-                    className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition"
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition"
                     required
                   />
                 </div>
@@ -396,7 +396,7 @@ const EditCar = () => {
                   <select
                     value={brand}
                     onChange={(e) => setBrand(e.target.value)}
-                    className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
                   >
                     {brands.map(b => <option key={b} value={b} className="bg-[#151518] text-white">{b}</option>)}
                   </select>
@@ -410,7 +410,7 @@ const EditCar = () => {
                     placeholder="e.g. Swift"
                     value={model}
                     onChange={(e) => setModel(e.target.value)}
-                    className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition"
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition"
                     required
                   />
                 </div>
@@ -423,7 +423,7 @@ const EditCar = () => {
                     placeholder="e.g. VXi"
                     value={variant}
                     onChange={(e) => setVariant(e.target.value)}
-                    className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition"
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition"
                   />
                 </div>
 
@@ -435,7 +435,7 @@ const EditCar = () => {
                     placeholder="e.g. 2021"
                     value={year}
                     onChange={(e) => setYear(e.target.value)}
-                    className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition"
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition"
                     required
                   />
                 </div>
@@ -448,7 +448,7 @@ const EditCar = () => {
                     placeholder="e.g. 520000"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition"
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition"
                     required
                   />
                 </div>
@@ -461,7 +461,7 @@ const EditCar = () => {
                     placeholder="e.g. 35000"
                     value={kmDriven}
                     onChange={(e) => setKmDriven(e.target.value)}
-                    className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition"
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition"
                     required
                   />
                 </div>
@@ -472,7 +472,7 @@ const EditCar = () => {
                   <select
                     value={fuel}
                     onChange={(e) => setFuel(e.target.value)}
-                    className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
                   >
                     {fuelTypes.map(f => <option key={f} value={f} className="bg-[#151518] text-white">{f}</option>)}
                   </select>
@@ -484,7 +484,7 @@ const EditCar = () => {
                   <select
                     value={transmission}
                     onChange={(e) => setTransmission(e.target.value)}
-                    className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
                   >
                     {transmissions.map(t => <option key={t} value={t} className="bg-[#151518] text-white">{t}</option>)}
                   </select>
@@ -496,7 +496,7 @@ const EditCar = () => {
                   <select
                     value={bodyType}
                     onChange={(e) => setBodyType(e.target.value)}
-                    className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
                   >
                     {bodyTypes.map(b => <option key={b} value={b} className="bg-[#151518] text-white">{b}</option>)}
                   </select>
@@ -510,7 +510,7 @@ const EditCar = () => {
                     placeholder="e.g. Silver"
                     value={color}
                     onChange={(e) => setColor(e.target.value)}
-                    className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition"
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition"
                   />
                 </div>
 
@@ -520,7 +520,7 @@ const EditCar = () => {
                   <select
                     value={ownership}
                     onChange={(e) => setOwnership(e.target.value)}
-                    className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
                   >
                     {ownerships.map(o => <option key={o} value={o} className="bg-[#151518] text-white">{o}</option>)}
                   </select>
@@ -534,7 +534,7 @@ const EditCar = () => {
                     placeholder="e.g. Pune, MH-12"
                     value={registrationCity}
                     onChange={(e) => setRegistrationCity(e.target.value)}
-                    className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition"
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition"
                   />
                 </div>
 
@@ -544,7 +544,7 @@ const EditCar = () => {
                   <select
                     value={insurance}
                     onChange={(e) => setInsurance(e.target.value)}
-                    className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
                   >
                     {insurances.map(i => <option key={i} value={i} className="bg-[#151518] text-white">{i}</option>)}
                   </select>
@@ -560,13 +560,13 @@ const EditCar = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={4}
-                  className="w-full px-4 py-3 text-xs bg-white/[0.02] border border-white/[0.08] rounded-xl text-white outline-none focus:border-white/20 transition resize-none"
+                  className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition resize-none"
                 ></textarea>
               </div>
             </div>
 
             {/* ================= SECTION 2: IMAGES ================= */}
-            <div className="bg-white/[0.02] border border-white/[0.06] rounded-3xl p-8 shadow-xl space-y-6">
+            <div className="bg-white/2 border border-white/6 rounded-3xl p-8 shadow-xl space-y-6">
               <div className="flex items-center gap-2.5 pb-3 border-b border-white/5">
                 <FaImage className="text-white/60" size={16} />
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider">
@@ -579,7 +579,7 @@ const EditCar = () => {
                 {/* Cover Image Upload */}
                 <div>
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-3">Cover Image (Single)</label>
-                  <div className="relative border-2 border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center bg-white/[0.01] hover:bg-white/[0.02] transition cursor-pointer group h-48">
+                  <div className="relative border-2 border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center bg-white/1 hover:bg-white/2 transition cursor-pointer group h-48">
                     <input
                       type="file"
                       accept="image/*"
@@ -610,7 +610,7 @@ const EditCar = () => {
                 {/* Gallery Images Upload */}
                 <div>
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-3">Gallery Images (Multiple)</label>
-                  <div className="relative border-2 border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center bg-white/[0.01] hover:bg-white/[0.02] transition cursor-pointer group h-48">
+                  <div className="relative border-2 border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center bg-white/1 hover:bg-white/2 transition cursor-pointer group h-48">
                     <input
                       type="file"
                       accept="image/*"
@@ -629,7 +629,7 @@ const EditCar = () => {
                 {/* Video Walk-around Upload */}
                 <div>
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-3">Walk-around Video (Optional)</label>
-                  <div className="relative border-2 border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center bg-white/[0.01] hover:bg-white/[0.02] transition cursor-pointer group h-48">
+                  <div className="relative border-2 border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center bg-white/1 hover:bg-white/2 transition cursor-pointer group h-48">
                     <input
                       type="file"
                       accept="video/*"
@@ -686,7 +686,7 @@ const EditCar = () => {
             </div>
 
             {/* ================= SECTION 3: FEATURES ================= */}
-            <div className="bg-white/[0.02] border border-white/[0.06] rounded-3xl p-8 shadow-xl space-y-6">
+            <div className="bg-white/2 border border-white/6 rounded-3xl p-8 shadow-xl space-y-6">
               <div className="flex items-center gap-2.5 pb-3 border-b border-white/5">
                 <FaListUl className="text-white/60" size={16} />
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider">
@@ -712,7 +712,7 @@ const EditCar = () => {
                     className={`px-4 py-3 rounded-xl border text-xs font-bold transition duration-300 text-center cursor-pointer ${
                       featuresList[feat.key]
                         ? "bg-white text-gray-955 border-white shadow-lg"
-                        : "bg-white/[0.01] border-white/[0.08] text-gray-400 hover:text-white hover:border-white/20"
+                        : "bg-white/2 border-white/6 text-gray-400 hover:text-white hover:border-white/20"
                     }`}
                   >
                     {feat.label}
@@ -722,7 +722,7 @@ const EditCar = () => {
             </div>
 
             {/* ================= SECTION 4: DISCOUNT SECTION ================= */}
-            <div className="bg-white/[0.02] border border-white/[0.06] rounded-3xl p-8 shadow-xl space-y-6">
+            <div className="bg-white/2 border border-white/6 rounded-3xl p-8 shadow-xl space-y-6">
               <div className="flex items-center gap-2.5 pb-3 border-b border-white/5">
                 <FaPercent className="text-white/60" size={16} />
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider">
@@ -761,7 +761,7 @@ const EditCar = () => {
                 {/* Conditional discount percentage input */}
                 {discountType === "discount" && (
                   <div className="flex-1 w-full max-w-xs transition duration-300 animate-slide-right">
-                    <div className="flex items-center bg-white/[0.02] border border-white/[0.08] rounded-xl px-4 py-2.5 focus-within:border-white/20 transition">
+                    <div className="flex items-center bg-white/2 border border-white/6 rounded-xl px-4 py-2.5 focus-within:border-white/20 transition">
                       <input
                         type="number"
                         placeholder="Discount Percentage (e.g. 15)"

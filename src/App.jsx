@@ -11,6 +11,8 @@ import AddCar from "./pages/admin/AddCar";
 import ManageCars from "./pages/admin/ManageCars";
 import EditCar from "./pages/admin/EditCar";
 import Enquiries from "./pages/admin/Enquiries";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfUse from "./pages/TermsOfUse";
 
 const App = () => {
   return (
@@ -21,6 +23,8 @@ const App = () => {
         <Route path="/all-cars" element={<AllCars />} />
         <Route path="/all-deals" element={<AllDeals />} />
         <Route path="/car/:id" element={<CarDetailPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-use" element={<TermsOfUse />} />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />

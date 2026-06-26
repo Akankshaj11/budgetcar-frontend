@@ -76,7 +76,7 @@ const Enquiries = () => {
       <AdminSidebar activeTab="enquiries" />
 
       {/* Main Content Area */}
-      <section className="flex-grow flex flex-col overflow-y-auto">
+      <section className="grow flex flex-col overflow-y-auto">
         
         <header className="h-20 border-b border-white/5 px-8 flex items-center justify-between shrink-0">
           <h1 className="text-lg font-bold text-white pl-12 md:pl-0">Client Enquiries</h1>
@@ -86,10 +86,10 @@ const Enquiries = () => {
         </header>
 
         {/* Content Container */}
-        <div className="p-8 max-w-5xl flex-grow space-y-6">
+        <div className="p-8 max-w-5xl grow space-y-6">
           
           {/* Toggle Buttons Filter Bar */}
-          <div className="flex bg-white/[0.02] border border-white/[0.06] p-1 rounded-2xl max-w-md shadow-lg">
+          <div className="flex bg-white/2 border border-white/6 p-1 rounded-2xl max-w-md shadow-lg">
             {[
               { id: "all", label: "All" },
               { id: "buy", label: "Buy" },
@@ -113,11 +113,11 @@ const Enquiries = () => {
           {/* Enquiries List */}
           <div className="space-y-4">
             {loading ? (
-              <div className="bg-white/[0.01] border border-white/[0.04] rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3">
+              <div className="bg-white/2 border border-white/6 rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3">
                 <p className="text-sm text-gray-500 font-semibold">Loading client enquiries...</p>
               </div>
             ) : filteredEnquiries.length === 0 ? (
-              <div className="bg-white/[0.01] border border-white/[0.04] rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3">
+              <div className="bg-white/2 border border-white/6 rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3">
                 <FaInbox size={32} className="text-gray-600" />
                 <p className="text-sm text-gray-500 font-semibold">No enquiries found</p>
                 <p className="text-[10px] text-gray-600">Messages sent through the contact form will appear here.</p>
@@ -126,11 +126,11 @@ const Enquiries = () => {
               filteredEnquiries.map((item) => (
                 <div 
                   key={item.id}
-                  className="bg-white/[0.02] border border-white/[0.06] rounded-3xl p-6 shadow-xl flex flex-col md:flex-row md:items-start justify-between gap-6 hover:border-white/10 transition-colors duration-300"
+                  className="bg-white/2 border border-white/6 rounded-3xl p-6 shadow-xl flex flex-col md:flex-row md:items-start justify-between gap-6 hover:border-white/10 transition-colors duration-300"
                 >
                   
                   {/* Left Block: Client Info & Message */}
-                  <div className="space-y-4 flex-grow">
+                  <div className="space-y-4 grow">
                     <div className="flex flex-wrap items-center gap-3">
                       <h3 className="text-sm font-bold text-white">{item.name}</h3>
                       <span className={`px-2.5 py-0.5 rounded-lg text-[9px] font-bold uppercase ${getTypeBadgeClass(item.type)}`}>
@@ -142,7 +142,7 @@ const Enquiries = () => {
                       </span>
                     </div>
 
-                    <p className="text-xs text-gray-400 whitespace-pre-line leading-relaxed bg-white/[0.01] border border-white/[0.03] p-4 rounded-xl">
+                    <p className="text-xs text-gray-400 whitespace-pre-line leading-relaxed bg-white/2 border border-white/6 p-4 rounded-xl">
                       {item.message}
                     </p>
 
