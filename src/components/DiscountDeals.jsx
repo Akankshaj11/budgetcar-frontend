@@ -23,7 +23,7 @@ const DiscountDeals = () => {
 }
     const deals = cars.filter(car => car.isDiscount);
     return (
-        <section className="bg-white py-15">
+        <section id="deals" className="bg-white py-15">
             <div className="max-w-7xl mx-auto px-6">
                 {/* Header */}
                 <div className="mb-5">
