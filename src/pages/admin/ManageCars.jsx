@@ -147,7 +147,11 @@ const ManageCars = () => {
                       </tr>
                     ) : (
                       filteredCars.map((car) => (
-                        <tr key={car.id} className="text-gray-300 hover:bg-white/1">
+                        <tr 
+                          key={car.id} 
+                          className="text-gray-300 hover:bg-white/1 cursor-pointer"
+                          onClick={() => navigate(`/admin/car-profile/${car.id}`)}
+                        >
                           <td className="py-4 flex items-center gap-3">
                             <img 
                               src={car.image} 
@@ -175,21 +179,30 @@ const ManageCars = () => {
                           <td className="py-4">
                             <div className="flex items-center justify-center gap-2">
                               <button
-                                onClick={() => navigate(`/admin/car-profile/${car.id}`)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/admin/car-profile/${car.id}`);
+                                }}
                                 className="p-2 rounded-lg bg-white/5 text-gray-400 hover:text-white transition duration-300 cursor-pointer"
                                 title="View Car Profile"
                               >
                                 <FaEye size={12} />
                               </button>
                               <button
-                                onClick={() => navigate(`/admin/edit-car/car/${car.id}`)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/admin/edit-car/car/${car.id}`);
+                                }}
                                 className="p-2 rounded-lg bg-white/5 text-gray-400 hover:text-white transition duration-300 cursor-pointer"
                                 title="Edit Car"
                               >
                                 <FaEdit size={12} />
                               </button>
                               <button
-                                onClick={() => handleDelete(car.id, "car")}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDelete(car.id, "car");
+                                }}
                                 className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition duration-300 cursor-pointer"
                                 title="Delete Car"
                               >
@@ -243,7 +256,11 @@ const ManageCars = () => {
                       </tr>
                     ) : (
                       filteredDeals.map((deal) => (
-                        <tr key={deal.id} className="text-gray-300 hover:bg-white/1">
+                        <tr 
+                          key={deal.id} 
+                          className="text-gray-300 hover:bg-white/1 cursor-pointer"
+                          onClick={() => navigate(`/admin/car-profile/${deal.id}`)}
+                        >
                           <td className="py-4 flex items-center gap-3">
                             <img 
                               src={deal.image} 
@@ -274,21 +291,30 @@ const ManageCars = () => {
                           <td className="py-4">
                             <div className="flex items-center justify-center gap-2">
                               <button
-                                onClick={() => navigate(`/admin/car-profile/${deal.id}`)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/admin/car-profile/${deal.id}`);
+                                }}
                                 className="p-2 rounded-lg bg-white/5 text-gray-400 hover:text-white transition duration-300 cursor-pointer"
                                 title="View Car Profile"
                               >
                                 <FaEye size={12} />
                               </button>
                               <button
-                                onClick={() => navigate(`/admin/edit-car/deal/${deal.id}`)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/admin/edit-car/deal/${deal.id}`);
+                                }}
                                 className="p-2 rounded-lg bg-white/5 text-gray-400 hover:text-white transition duration-300 cursor-pointer"
                                 title="Edit Deal"
                               >
                                 <FaEdit size={12} />
                               </button>
                               <button
-                                onClick={() => handleDelete(deal.id, "deal")}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDelete(deal.id, "deal");
+                                }}
                                 className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition duration-300 cursor-pointer"
                                 title="Delete Deal"
                               >
