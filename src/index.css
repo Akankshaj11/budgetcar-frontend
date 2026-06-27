@@ -138,3 +138,143 @@ html {
   scrollbar-width: none;  /* Firefox */
 }
 
+/* Admin Panel Themes */
+.admin-panel.theme-light {
+  --admin-bg: #f9fafb;
+  --admin-sidebar-bg: #ffffff;
+  --admin-sidebar-border: #e5e7eb;
+  --admin-sidebar-text: #374151;
+  --admin-sidebar-hover: #f3f4f6;
+  --admin-header-bg: #ffffff;
+  --admin-header-border: #e5e7eb;
+  --admin-card-bg: #ffffff;
+  --admin-card-border: #e5e7eb;
+  --admin-text-title: #111827;
+  --admin-text-body: #374151;
+  --admin-text-muted: #6b7280;
+  --admin-input-bg: #ffffff;
+  --admin-input-border: #d1d5db;
+  --admin-table-row-hover: #f3f4f6;
+  --admin-table-border: #e5e7eb;
+  --admin-tab-active-bg: #f3f4f6;
+  --admin-sidebar-logo-brightness: brightness(0);
+}
+
+.admin-panel.theme-dark {
+  --admin-bg: #070709;
+  --admin-sidebar-bg: rgba(0, 0, 0, 0.45);
+  --admin-sidebar-border: rgba(255, 255, 255, 0.05);
+  --admin-sidebar-text: #d1d5db;
+  --admin-sidebar-hover: rgba(255, 255, 255, 0.05);
+  --admin-header-bg: transparent;
+  --admin-header-border: rgba(255, 255, 255, 0.05);
+  --admin-card-bg: rgba(255, 255, 255, 0.02);
+  --admin-card-border: rgba(255, 255, 255, 0.06);
+  --admin-text-title: #ffffff;
+  --admin-text-body: #d1d5db;
+  --admin-text-muted: #6b7280;
+  --admin-input-bg: rgba(255, 255, 255, 0.02);
+  --admin-input-border: rgba(255, 255, 255, 0.06);
+  --admin-table-row-hover: rgba(255, 255, 255, 0.01);
+  --admin-table-border: rgba(255, 255, 255, 0.05);
+  --admin-tab-active-bg: rgba(255, 255, 255, 0.05);
+  --admin-sidebar-logo-brightness: brightness(0) invert(1);
+}
+
+.admin-panel {
+  background-color: var(--admin-bg) !important;
+  color: var(--admin-text-body) !important;
+}
+
+.admin-panel aside {
+  background-color: var(--admin-sidebar-bg) !important;
+  border-right: 1px solid var(--admin-sidebar-border) !important;
+  color: var(--admin-sidebar-text) !important;
+}
+
+.admin-panel aside img {
+  filter: var(--admin-sidebar-logo-brightness) !important;
+}
+
+.admin-panel aside a,
+.admin-panel aside button {
+  color: var(--admin-sidebar-text) !important;
+}
+
+.admin-panel aside a:hover,
+.admin-panel aside button:hover {
+  background-color: var(--admin-sidebar-hover) !important;
+}
+
+.admin-panel header {
+  background-color: var(--admin-header-bg) !important;
+  border-bottom: 1px solid var(--admin-header-border) !important;
+}
+
+.admin-panel header h1 {
+  color: var(--admin-text-title) !important;
+}
+
+.admin-panel h1,
+.admin-panel h2,
+.admin-panel h3,
+.admin-panel h4 {
+  color: var(--admin-text-title) !important;
+}
+
+.admin-panel .bg-white\/2 {
+  background-color: var(--admin-card-bg) !important;
+  border-color: var(--admin-card-border) !important;
+}
+
+.admin-panel .border-white\/6 {
+  border-color: var(--admin-card-border) !important;
+}
+
+.admin-panel .border-white\/5 {
+  border-color: var(--admin-header-border) !important;
+}
+
+.admin-panel .divide-white\/5 > * + * {
+  border-color: var(--admin-table-border) !important;
+}
+
+.admin-panel tr.border-b {
+  border-color: var(--admin-table-border) !important;
+}
+
+.admin-panel tbody tr:hover {
+  background-color: var(--admin-table-row-hover) !important;
+}
+
+.admin-panel input,
+.admin-panel select,
+.admin-panel textarea {
+  background-color: var(--admin-input-bg) !important;
+  border-color: var(--admin-input-border) !important;
+  color: var(--admin-text-title) !important;
+}
+
+.admin-panel input::placeholder,
+.admin-panel textarea::placeholder {
+  color: var(--admin-text-muted) !important;
+}
+
+.admin-panel .text-white {
+  color: var(--admin-text-title) !important;
+}
+.admin-panel .text-gray-300 {
+  color: var(--admin-text-body) !important;
+}
+.admin-panel .text-gray-500 {
+  color: var(--admin-text-muted) !important;
+}
+.admin-panel .bg-white\/5 {
+  background-color: var(--admin-sidebar-hover) !important;
+  border-color: var(--admin-card-border) !important;
+}
+.admin-panel .bg-\[\#070709\] {
+  background-color: var(--admin-bg) !important;
+}
+
+

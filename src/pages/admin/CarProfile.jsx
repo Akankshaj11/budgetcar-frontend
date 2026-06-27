@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { 
   FaArrowLeft, FaUpload, FaTrash, FaFilePdf, FaFileImage, 
   FaCheck, FaTimes, FaSpinner, FaCar, FaEdit, FaCheckCircle, FaFile,
-  FaShareAlt, FaWhatsapp, FaFacebook, FaTwitter, FaEnvelope, FaCopy
+  FaShareAlt, FaWhatsapp, FaFacebook, FaTwitter, FaEnvelope, FaCopy, FaEye
 } from "react-icons/fa";
 import AdminSidebar from "../../components/AdminSidebar";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -17,16 +17,40 @@ const CarProfile = () => {
   const [car, setCar] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Share States
-  const [showShareModal, setShowShareModal] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem("admin-theme") || "light");
+
+  useEffect(() => {
+    const handleThemeChange = () => {
+      setTheme(localStorage.getItem("admin-theme") || "light");
+    };
+    window.addEventListener("admin-theme-changed", handleThemeChange);
+    return () => window.removeEventListener("admin-theme-changed", handleThemeChange);
+  }, []);
 
   // Document Upload States
   const [docFile, setDocFile] = useState(null);
-  const [docName, setDocName] = useState("");
+  const [docName, setDocName] = useState("RC");
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState("");
+
+  // Document Preview & Share States
+  const [previewDoc, setPreviewDoc] = useState(null);
+  const [copiedDocId, setCopiedDocId] = useState("");
+
+  // Sync dynamic document default option
+  useEffect(() => {
+    if (car?.documents) {
+      const allDocOptions = ["RC", "Aadhar", "Pan", "Insurance", "Bank noc", "form 29", "form 30", "puc"];
+      const existingDocNames = (car.documents || []).map(d => d.name);
+      const remaining = allDocOptions.filter(opt => !existingDocNames.includes(opt));
+      if (remaining.length > 0) {
+        setDocName(remaining[0]);
+      } else {
+        setDocName("");
+      }
+    }
+  }, [car?.documents]);
 
   // Status updating state and handler
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
@@ -91,11 +115,6 @@ const CarProfile = () => {
 
     setUploadError("");
     setDocFile(file);
-    if (!docName) {
-      // Default doc name to file name without extension
-      const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf(".")) || file.name;
-      setDocName(nameWithoutExt);
-    }
   };
 
   const handleUploadDocument = async (e) => {
@@ -136,7 +155,7 @@ const CarProfile = () => {
 
       setUploadSuccess("Document uploaded successfully!");
       setDocFile(null);
-      setDocName("");
+      setDocName("RC");
       
       // Clear success message after 3s
       setTimeout(() => setUploadSuccess(""), 3000);
@@ -172,16 +191,35 @@ const CarProfile = () => {
     }
   };
 
+  const handleShareDocument = async (docItem) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${docItem.name} - BudgetCarHub`,
+          text: `View document: ${docItem.name}`,
+          url: docItem.url
+        });
+        return;
+      } catch (e) {
+        console.log("Navigator share failed, falling back to copy", e);
+      }
+    }
+    // Fallback to copy link
+    navigator.clipboard.writeText(docItem.url);
+    setCopiedDocId(docItem.id);
+    setTimeout(() => setCopiedDocId(""), 2000);
+  };
+
   // Safe fallback placeholder image URL
   const placeholderImage = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='60' viewBox='0 0 80 60'><rect width='100%' height='100%' fill='%231a1a1e'/><text x='50%' y='55%' font-size='8' font-family='sans-serif' font-weight='bold' fill='%23444' dominant-baseline='middle' text-anchor='middle'>NO IMAGE</text></svg>";
 
   if (loading) {
     return (
-      <main className="h-screen bg-[#070709] text-gray-300 flex overflow-hidden">
+      <main className={`admin-panel theme-${theme} h-screen bg-[#070709] text-gray-300 flex overflow-hidden`}>
         <AdminSidebar activeTab="manage" />
         <section className="grow flex flex-col justify-center items-center">
-          <FaSpinner className="animate-spin text-white text-3xl mb-4" />
-          <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Loading car profile...</p>
+          <FaSpinner className="animate-spin text-gray-400 text-3xl mb-4" />
+          <p className="text-xs font-bold uppercase tracking-wider text-gray-400">Loading car profile...</p>
         </section>
       </main>
     );
@@ -192,8 +230,12 @@ const CarProfile = () => {
   const editRoute = car.isDiscount ? `/admin/edit-car/deal/${car.id}` : `/admin/edit-car/car/${car.id}`;
   const carStatus = car.status || "Neutral";
 
+  const allDocOptions = ["RC", "Aadhar", "Pan", "Insurance", "Bank noc", "form 29", "form 30", "puc"];
+  const existingDocNames = (car?.documents || []).map(d => d.name);
+  const availableDocOptions = allDocOptions.filter(opt => !existingDocNames.includes(opt));
+
   return (
-    <main className="h-screen bg-[#070709] text-gray-300 flex overflow-hidden">
+    <main className={`admin-panel theme-${theme} h-screen bg-[#070709] text-gray-300 flex overflow-hidden`}>
       
       {/* Shared Admin Sidebar */}
       <AdminSidebar activeTab="manage" />
@@ -225,17 +267,10 @@ const CarProfile = () => {
               <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mt-0.5">{car.brand} • {car.variant || "Base"}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
-            <button 
-              onClick={() => setShowShareModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-white/10 active:scale-[0.98] transition cursor-pointer"
-            >
-              <FaShareAlt size={12} />
-              Share Profile
-            </button>
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
             <button 
               onClick={() => navigate(editRoute)}
-              className="flex items-center gap-2 px-4 py-2 bg-white text-gray-955 text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg hover:bg-gray-150 active:scale-[0.98] transition cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 bg-white text-gray-900 text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg hover:bg-gray-150 active:scale-[0.98] transition cursor-pointer"
             >
               <FaEdit size={12} />
               Edit Car
@@ -250,6 +285,7 @@ const CarProfile = () => {
           <div className="lg:col-span-2 space-y-8">
             
             {/* Cover Image & Price */}
+            {/* <div className="bg-white/[0.02] border border-white/[0.06] rounded-3xl overflow-hidden shadow-xl"> */}
             <div className="bg-white/2 border border-white/6 rounded-3xl overflow-hidden shadow-xl">
               <div className="relative h-64 md:h-80 bg-gray-950">
                 <img 
@@ -270,7 +306,7 @@ const CarProfile = () => {
                   </span>
                 )}
               </div>
-              <div className="p-6 flex items-center justify-between border-t border-white/5 bg-white/[0.01]">
+              <div className="p-6 flex items-center justify-between border-t border-white/5 bg-white/1">
                 <div>
                   <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Selling Price</p>
                   <h2 className="text-2xl font-black text-white mt-1">
@@ -309,7 +345,7 @@ const CarProfile = () => {
                   { label: "Car Status (Customer)", value: car.carStatus || "Available" },
                   { label: "Admin Status", value: carStatus, isStatus: true },
                 ].map((spec, index) => (
-                  <div key={index} className="space-y-1 bg-white/[0.01] border border-white/[0.03] p-3.5 rounded-2xl">
+                  <div key={index} className="space-y-1 bg-white/1 border border-white/3 p-3.5 rounded-2xl">
                     <span className="block text-[9px] font-bold uppercase tracking-wider text-gray-500">{spec.label}</span>
                     {spec.isStatus ? (
                       <div className="relative mt-1">
@@ -434,22 +470,28 @@ const CarProfile = () => {
                 {/* File Upload Selector */}
                 <div className="space-y-2">
                   <label className="block text-[9px] font-bold uppercase tracking-wider text-gray-500">Select File (Image or PDF) *</label>
-                  <div className="relative border-2 border-dashed border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center bg-white/2 hover:bg-white/3 transition cursor-pointer group min-h-[120px]">
+                  <div className="relative border-2 border-dashed border-white/10 rounded-2xl p-4 flex flex-col items-center justify-center bg-white/2 hover:bg-white/3 transition cursor-pointer group min-h-30 disabled:opacity-50">
                     <input
                       type="file"
                       accept="application/pdf, image/*"
                       onChange={handleFileChange}
-                      className="absolute inset-0 opacity-0 cursor-pointer"
+                      className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed"
                       required
+                      disabled={availableDocOptions.length === 0}
                     />
-                    {docFile ? (
+                    {availableDocOptions.length === 0 ? (
+                      <div className="text-center space-y-1">
+                        <FaCheckCircle className="text-green-500 mx-auto" size={18} />
+                        <p className="text-xs font-bold text-gray-400">All documents uploaded</p>
+                      </div>
+                    ) : docFile ? (
                       <div className="text-center p-2">
                         {docFile.type.includes("pdf") ? (
                           <FaFilePdf size={24} className="text-red-400 mx-auto mb-2 animate-bounce" />
                         ) : (
                           <FaFileImage size={24} className="text-blue-400 mx-auto mb-2 animate-bounce" />
                         )}
-                        <p className="text-xs font-bold text-white truncate max-w-[200px]">{docFile.name}</p>
+                        <p className="text-xs font-bold text-white truncate max-w-50">{docFile.name}</p>
                         <p className="text-[9px] text-gray-500 font-medium">{(docFile.size / 1024 / 1024).toFixed(2)} MB</p>
                       </div>
                     ) : (
@@ -465,14 +507,22 @@ const CarProfile = () => {
                 {/* Document Name input */}
                 <div className="space-y-2">
                   <label className="block text-[9px] font-bold uppercase tracking-wider text-gray-500">Document Label / Name *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Registration Certificate (RC)"
-                    value={docName}
-                    onChange={(e) => setDocName(e.target.value)}
-                    className="w-full px-4 py-2.5 text-xs bg-[#070709] border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition"
-                  />
+                  {availableDocOptions.length === 0 ? (
+                    <div className="w-full px-4 py-2.5 text-xs bg-white/5 border border-white/10 rounded-xl text-gray-500">
+                      No additional categories available.
+                    </div>
+                  ) : (
+                    <select
+                      required
+                      value={docName}
+                      onChange={(e) => setDocName(e.target.value)}
+                      className="w-full px-4 py-2.5 text-xs bg-[#070709] border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
+                    >
+                      {availableDocOptions.map((opt) => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
+                    </select>
+                  )}
                 </div>
 
                 {uploadError && (
@@ -490,8 +540,8 @@ const CarProfile = () => {
                 {/* Action button */}
                 <button
                   type="submit"
-                  disabled={isUploading || !docFile}
-                  className="w-full py-3 bg-white text-gray-955 text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg hover:bg-gray-150 active:scale-[0.98] transition cursor-pointer disabled:opacity-40 flex items-center justify-center gap-2"
+                  disabled={isUploading || !docFile || availableDocOptions.length === 0}
+                  className="w-full py-3 bg-white text-gray-900 text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg hover:bg-gray-150 active:scale-[0.98] transition cursor-pointer disabled:opacity-40 flex items-center justify-center gap-2"
                 >
                   {isUploading ? (
                     <>
@@ -519,7 +569,7 @@ const CarProfile = () => {
                   (car.documents || []).map((docItem) => (
                     <div 
                       key={docItem.id} 
-                      className="flex items-center justify-between bg-white/[0.01] border border-white/5 rounded-2xl p-3.5 hover:bg-white/[0.02] transition"
+                      className="flex items-center justify-between bg-white/1 border border-white/3 rounded-2xl p-3.5 hover:bg-white/2 transition"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="shrink-0 p-2 rounded-xl bg-white/5 border border-white/10">
@@ -532,7 +582,7 @@ const CarProfile = () => {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs font-bold text-white truncate max-w-[130px]" title={docItem.name}>
+                          <p className="text-xs font-bold text-white truncate max-w-32.5" title={docItem.name}>
                             {docItem.name}
                           </p>
                           <span className="block text-[8px] text-gray-550 font-bold uppercase tracking-wider mt-0.5">
@@ -546,14 +596,29 @@ const CarProfile = () => {
                       </div>
                       
                       <div className="flex items-center gap-2">
-                        <a 
-                          href={docItem.url} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[9px] font-bold text-white uppercase tracking-wider hover:bg-white/10 hover:text-white transition duration-200"
+                        {/* Preview button */}
+                        <button
+                          onClick={() => setPreviewDoc(docItem)}
+                          className="p-2 rounded-lg bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition duration-200 cursor-pointer"
+                          title="Preview Document"
                         >
-                          View
-                        </a>
+                          <FaEye size={11} />
+                        </button>
+
+                        {/* Share button */}
+                        <button
+                          onClick={() => handleShareDocument(docItem)}
+                          className="p-2 rounded-lg bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition duration-200 cursor-pointer flex items-center justify-center min-w-7"
+                          title="Share / Copy Link"
+                        >
+                          {copiedDocId === docItem.id ? (
+                            <FaCheck className="text-green-400" size={10} />
+                          ) : (
+                            <FaShareAlt size={10} />
+                          )}
+                        </button>
+
+                        {/* Delete button */}
                         <button
                           onClick={() => handleDeleteDocument(docItem.id)}
                           className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition duration-250 cursor-pointer"
@@ -565,7 +630,7 @@ const CarProfile = () => {
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-6 bg-white/[0.01] border border-dashed border-white/5 rounded-2xl">
+                  <div className="text-center py-6 bg-white/1 border border-dashed border-white/3 rounded-2xl">
                     <p className="text-xs text-gray-550 font-medium">No documents uploaded yet.</p>
                     <p className="text-[9px] text-gray-600 mt-1">Upload files to save in this car's record.</p>
                   </div>
@@ -579,106 +644,58 @@ const CarProfile = () => {
 
       </section>
 
-      {/* Share Modal */}
-      {showShareModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-70 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-gray-100 relative animate-in fade-in zoom-in-95 duration-200">
+      {/* Document Preview Modal */}
+      {previewDoc && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-70 flex items-center justify-center p-4">
+          <div className="bg-[#0f0f12] border border-white/10 rounded-3xl p-6 max-w-4xl w-full relative animate-in fade-in zoom-in-95 duration-200 shadow-2xl flex flex-col max-h-[90vh]">
             <button 
-              onClick={() => {
-                setShowShareModal(false);
-                setCopied(false);
-              }}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 cursor-pointer"
+              onClick={() => setPreviewDoc(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white cursor-pointer p-2 rounded-xl bg-white/5 hover:bg-white/10 transition"
             >
-              <FaTimes size={18} />
+              <FaTimes size={16} />
             </button>
             
-            <h3 className="text-lg font-extrabold text-gray-950 mb-2">Share this Car</h3>
-            <p className="text-xs text-gray-550 mb-4 font-medium">Share the details of {car.name} with others.</p>
+            <h3 className="text-md font-bold text-white uppercase tracking-wider mb-1 pr-10">
+              Document Preview: {previewDoc.name}
+            </h3>
+            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-4">
+              Uploaded on {previewDoc.uploadedAt ? new Date(previewDoc.uploadedAt).toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+              }) : "N/A"}
+            </p>
             
-            {/* Social Share Icons Grid */}
-            <div className="grid grid-cols-5 gap-2 mb-6">
-              {/* WhatsApp */}
-              <a 
-                href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Check out this ${car.name} profile on BudgetCarHub: ${window.location.href}`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col items-center gap-1 group text-center cursor-pointer"
-              >
-                <div className="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center group-hover:bg-green-100 transition duration-300">
-                  <FaWhatsapp size={18} />
-                </div>
-                <span className="text-[9px] font-bold text-gray-500">WhatsApp</span>
-              </a>
-
-              {/* Facebook */}
-              <a 
-                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col items-center gap-1 group text-center cursor-pointer"
-              >
-                <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-100 transition duration-300">
-                  <FaFacebook size={16} />
-                </div>
-                <span className="text-[9px] font-bold text-gray-500">Facebook</span>
-              </a>
-
-              {/* X */}
-              <a 
-                href={`https://x.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`Check out the vehicle profile for ${car.name}!`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col items-center gap-1 group text-center cursor-pointer"
-              >
-                <div className="w-10 h-10 rounded-full bg-gray-900 text-white flex items-center justify-center hover:bg-black transition duration-300">
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                </div>
-                <span className="text-[9px] font-bold text-gray-500">X</span>
-              </a>
-
-              {/* Twitter */}
-              <a 
-                href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`Check out the vehicle profile for ${car.name}!`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col items-center gap-1 group text-center cursor-pointer"
-              >
-                <div className="w-10 h-10 rounded-full bg-[#e8f5fe] text-[#1DA1F2] flex items-center justify-center group-hover:bg-[#d4edfe] transition duration-300">
-                  <FaTwitter size={16} />
-                </div>
-                <span className="text-[9px] font-bold text-gray-500">Twitter</span>
-              </a>
-
-              {/* Email */}
-              <a 
-                href={`mailto:?subject=${encodeURIComponent(`Vehicle Profile: ${car.name}`)}&body=${encodeURIComponent(`Hi,\n\nI wanted to share the vehicle profile for the ${car.name}.\n\nLink: ${window.location.href}`)}`}
-                className="flex flex-col items-center gap-1 group text-center cursor-pointer"
-              >
-                <div className="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center group-hover:bg-red-100 transition duration-300">
-                  <FaEnvelope size={16} />
-                </div>
-                <span className="text-[9px] font-bold text-gray-500">Email</span>
-              </a>
+            <div className="grow overflow-y-auto flex items-center justify-center p-2 bg-[#070709] rounded-2xl border border-white/5 min-h-75">
+              {previewDoc.type === "pdf" ? (
+                <iframe 
+                  src={previewDoc.url} 
+                  className="w-full h-[60vh] rounded-xl bg-white border-0" 
+                  title={previewDoc.name}
+                />
+              ) : (
+                <img 
+                  src={previewDoc.url} 
+                  className="max-w-full max-h-[60vh] rounded-xl object-contain" 
+                  alt={previewDoc.name} 
+                />
+              )}
             </div>
             
-            {/* Copy Link Input Section */}
-            <div className="relative flex items-center">
-              <input 
-                type="text" 
-                readOnly 
-                value={window.location.href}
-                className="w-full text-xs border border-gray-200 rounded-xl pl-3 pr-20 py-2.5 outline-none bg-gray-50 text-gray-500 select-all"
-              />
-              <button 
-                onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 2000);
-                }}
-                className="absolute right-1 px-3 py-1.5 rounded-lg bg-gray-900 hover:bg-gray-800 text-white text-[10px] font-extrabold uppercase tracking-wider transition cursor-pointer"
+            <div className="flex justify-end gap-3 mt-4">
+              <a 
+                href={previewDoc.url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="px-4 py-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition cursor-pointer"
               >
-                {copied ? "Copied!" : "Copy"}
+                Open in new tab
+              </a>
+              <button 
+                onClick={() => setPreviewDoc(null)}
+                className="px-4 py-2 bg-white text-gray-900 hover:bg-gray-150 text-xs font-bold uppercase tracking-wider rounded-xl transition cursor-pointer"
+              >
+                Close
               </button>
             </div>
           </div>

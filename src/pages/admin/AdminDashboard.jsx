@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { FaCar, FaTag } from "react-icons/fa";
 import useCars from "../../hooks/useCars";
@@ -7,6 +7,16 @@ import AdminSidebar from "../../components/AdminSidebar";
 const AdminDashboard = () => {
   const [searchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "dashboard";
+
+  const [theme, setTheme] = useState(() => localStorage.getItem("admin-theme") || "light");
+
+  useEffect(() => {
+    const handleThemeChange = () => {
+      setTheme(localStorage.getItem("admin-theme") || "light");
+    };
+    window.addEventListener("admin-theme-changed", handleThemeChange);
+    return () => window.removeEventListener("admin-theme-changed", handleThemeChange);
+  }, []);
 
   // Load inventory from Firestore
   const { cars: carsList, loading } = useCars();
@@ -29,7 +39,7 @@ const AdminDashboard = () => {
   });
 
   return (
-    <main className="h-screen bg-[#070709] text-gray-300 flex overflow-hidden">
+    <main className={`admin-panel theme-${theme} h-screen bg-[#070709] text-gray-300 flex overflow-hidden`}>
       
       {/* Shared Admin Sidebar */}
       <AdminSidebar activeTab={activeTab} />

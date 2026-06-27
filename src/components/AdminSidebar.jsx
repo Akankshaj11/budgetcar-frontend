@@ -1,14 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   FaCarSide, FaHome, FaPlus, FaEnvelope, 
-  FaSignOutAlt, FaCar, FaBars, FaTimes
+  FaSignOutAlt, FaCar, FaBars, FaTimes,
+  FaSun, FaMoon
 } from "react-icons/fa";
 import { auth } from "../firebase";
 
 const AdminSidebar = ({ activeTab }) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem("admin-theme") || "light");
+
+  useEffect(() => {
+    localStorage.setItem("admin-theme", theme);
+    const mainEl = document.querySelector("main.admin-panel");
+    if (mainEl) {
+      if (theme === "light") {
+        mainEl.classList.add("theme-light");
+        mainEl.classList.remove("theme-dark");
+      } else {
+        mainEl.classList.add("theme-dark");
+        mainEl.classList.remove("theme-light");
+      }
+    }
+  }, [theme]);
 
   const handleLogout = async () => {
     if (confirm("Are you sure you want to log out?")) {
@@ -92,8 +108,15 @@ const AdminSidebar = ({ activeTab }) => {
           </nav>
         </div>
 
-        {/* Logout Section */}
-        <div className="p-4 border-t border-white/5">
+        {/* Theme Toggle & Logout Section */}
+        <div className="p-4 border-t border-white/5 space-y-1.5">
+          <button
+            onClick={() => setTheme(prev => prev === "light" ? "dark" : "light")}
+            className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider transition duration-300 cursor-pointer text-gray-400 hover:text-white hover:bg-white/5"
+          >
+            {theme === "light" ? <FaMoon size={14} /> : <FaSun size={14} />}
+            {theme === "light" ? "Dark Mode" : "Light Mode"}
+          </button>
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider text-red-400 hover:text-red-300 hover:bg-red-500/5 transition duration-300 cursor-pointer"

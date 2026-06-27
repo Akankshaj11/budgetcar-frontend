@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaCheck, FaTimes, FaUpload, FaCar, FaImage, FaListUl, FaPercent } from "react-icons/fa";
 import AdminSidebar from "../../components/AdminSidebar";
@@ -10,6 +10,16 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 const AddCar = () => {
   const navigate = useNavigate();
+
+  const [theme, setTheme] = useState(() => localStorage.getItem("admin-theme") || "light");
+
+  useEffect(() => {
+    const handleThemeChange = () => {
+      setTheme(localStorage.getItem("admin-theme") || "light");
+    };
+    window.addEventListener("admin-theme-changed", handleThemeChange);
+    return () => window.removeEventListener("admin-theme-changed", handleThemeChange);
+  }, []);
   const [image, setImage] = useState(null);
 
   // Basic Information States
@@ -308,7 +318,7 @@ const ownerships = ["2nd Owner", "3rd Owner"];
 const insurances = ["Comprehensive", "Third Party", "Zero Dep", "Expired", "No Insurance"];
 
 return (
-  <main className="h-screen bg-[#070709] text-gray-300 flex overflow-hidden">
+  <main className={`admin-panel theme-${theme} h-screen bg-[#070709] text-gray-300 flex overflow-hidden`}>
 
     {/* Shared Admin Sidebar */}
     <AdminSidebar activeTab="add" />

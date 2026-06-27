@@ -10,6 +10,16 @@ const EditCar = () => {
   const navigate = useNavigate();
   const { type, id } = useParams();
 
+  const [theme, setTheme] = useState(() => localStorage.getItem("admin-theme") || "light");
+
+  useEffect(() => {
+    const handleThemeChange = () => {
+      setTheme(localStorage.getItem("admin-theme") || "light");
+    };
+    window.addEventListener("admin-theme-changed", handleThemeChange);
+    return () => window.removeEventListener("admin-theme-changed", handleThemeChange);
+  }, []);
+
   // Basic Information States
   const [carName, setCarName] = useState("");
   const [brand, setBrand] = useState("");
@@ -352,7 +362,7 @@ const EditCar = () => {
   const insurances = ["Comprehensive", "Third Party", "Zero Dep", "Expired", "No Insurance"];
 
   return (
-    <main className="h-screen bg-[#070709] text-gray-300 flex overflow-hidden">
+    <main className={`admin-panel theme-${theme} h-screen bg-[#070709] text-gray-300 flex overflow-hidden`}>
       
       {/* Shared Admin Sidebar */}
       <AdminSidebar activeTab="manage" />

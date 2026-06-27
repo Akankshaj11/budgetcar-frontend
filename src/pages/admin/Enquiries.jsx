@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaInbox, FaTrash, FaPhoneAlt, FaEnvelope, FaClock, FaTags } from "react-icons/fa";
 import AdminSidebar from "../../components/AdminSidebar";
 import useEnquiries from "../../hooks/useEnquiries";
@@ -40,6 +40,16 @@ const Enquiries = () => {
   const { enquiries, loading } = useEnquiries();
   const [activeFilter, setActiveFilter] = useState("all"); // "all", "buy", "sell", "testdrive"
 
+  const [theme, setTheme] = useState(() => localStorage.getItem("admin-theme") || "light");
+
+  useEffect(() => {
+    const handleThemeChange = () => {
+      setTheme(localStorage.getItem("admin-theme") || "light");
+    };
+    window.addEventListener("admin-theme-changed", handleThemeChange);
+    return () => window.removeEventListener("admin-theme-changed", handleThemeChange);
+  }, []);
+
   const handleDelete = async (id) => {
     if (confirm("Are you sure you want to delete this enquiry?")) {
       try {
@@ -70,7 +80,7 @@ const Enquiries = () => {
   };
 
   return (
-    <main className="h-screen bg-[#070709] text-gray-300 flex overflow-hidden">
+    <main className={`admin-panel theme-${theme} h-screen bg-[#070709] text-gray-300 flex overflow-hidden`}>
       
       {/* Shared Admin Sidebar */}
       <AdminSidebar activeTab="enquiries" />
