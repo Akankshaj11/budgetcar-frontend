@@ -23,7 +23,8 @@ const brandLogos = [
     "/logos/kia.svg", "/logos/hyundai.svg", "/logos/skoda.svg", 
     "/logos/suzuki.svg", "/logos/honda.svg", "/logos/ford.svg",
     "/logos/mg.svg", "/logos/renault.svg", "/logos/volkswagen.svg",
-    "/logos/audi.svg", "/logos/mercedes.svg", "/logos/bmw.svg"
+    "/logos/audi.svg", "/logos/mercedes.svg", "/logos/bmw.svg",
+    "/logos/jaguar.svg"
 ];
 
 const Home = () => {

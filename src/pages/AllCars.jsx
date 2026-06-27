@@ -685,6 +685,14 @@ const AllCars = () => {
                                                 >
                                                     {car.badge}
                                                 </span>
+                                                <span
+                                                    className={`absolute right-3 top-3 px-2.5 py-0.5 text-[9px] font-bold text-white rounded-md uppercase tracking-wider ${
+                                                        (car.carStatus || "Available").toLowerCase() === "sold" ? "bg-red-600" :
+                                                        (car.carStatus || "Available").toLowerCase() === "booked" ? "bg-gray-500" : "bg-green-600"
+                                                    }`}
+                                                >
+                                                    {car.carStatus || "Available"}
+                                                </span>
                                             </div>
 
                                             {/* Content Section */}

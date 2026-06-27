@@ -537,14 +537,6 @@ const AllDeals = () => {
         </div>
     );
 
-    if (loading) {
-        return (
-            <div className="min-h-screen flex justify-center items-center bg-[#111111] text-white">
-                <p className="text-lg font-semibold">Loading Deals...</p>
-            </div>
-        );
-    }
-
     const jsonLd = useMemo(() => {
         const siteUrl = getSiteUrl();
         return {
@@ -564,6 +556,14 @@ const AllDeals = () => {
             ],
         };
     }, []);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex justify-center items-center bg-[#111111] text-white">
+                <p className="text-lg font-semibold">Loading Deals...</p>
+            </div>
+        );
+    }
 
     return (
         <>
@@ -696,6 +696,14 @@ const AllDeals = () => {
                                                     className="absolute left-3 top-3 rounded-md bg-red-650 px-2.5 py-0.5 text-[9px] font-bold text-white shadow-sm uppercase tracking-wider flex items-center gap-1"
                                                 >
                                                     <FaTag size={8} /> {car.badge}
+                                                </span>
+                                                <span
+                                                    className={`absolute right-3 top-3 px-2.5 py-0.5 text-[9px] font-bold text-white rounded-md uppercase tracking-wider ${
+                                                        (car.carStatus || "Available").toLowerCase() === "sold" ? "bg-red-600" :
+                                                        (car.carStatus || "Available").toLowerCase() === "booked" ? "bg-gray-500" : "bg-green-600"
+                                                    }`}
+                                                >
+                                                    {car.carStatus || "Available"}
                                                 </span>
                                             </div>
 

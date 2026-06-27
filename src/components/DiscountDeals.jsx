@@ -92,6 +92,14 @@ const DiscountDeals = () => {
                                     <span className={`absolute left-3 top-3 px-2 py-1 text-[10px] font-bold text-white rounded-md ${deal.color}`}>
                                         {deal.badge}
                                     </span>
+                                    <span
+                                        className={`absolute right-3 top-3 px-2.5 py-0.5 text-[9px] font-bold text-white rounded-md uppercase tracking-wider ${
+                                            (deal.carStatus || "Available").toLowerCase() === "sold" ? "bg-red-600" :
+                                            (deal.carStatus || "Available").toLowerCase() === "booked" ? "bg-gray-500" : "bg-green-600"
+                                        }`}
+                                    >
+                                        {deal.carStatus || "Available"}
+                                    </span>
                                 </div>
 
                                 <div className="p-3">

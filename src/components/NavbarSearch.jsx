@@ -33,7 +33,7 @@ const NavbarSearch = ({ searchQuery, setSearchQuery, hideLinks = false }) => {
               <img 
                 src="/budgetcarlogo.png" 
                 alt="BudgetCarHub Logo" 
-                className="h-9 sm:h-10 md:h-11 w-auto max-w-[120px] sm:max-w-[140px] md:max-w-[160px] object-contain brightness-0" 
+                className="h-11 sm:h-13 md:h-20 w-auto max-w-[180px] sm:max-w-[210px] md:max-w-[240px] object-contain brightness-0" 
               />
             </div>
 

@@ -26,6 +26,9 @@ const EditCar = () => {
   const [registrationCity, setRegistrationCity] = useState("");
   const [insurance, setInsurance] = useState("");
   const [description, setDescription] = useState("");
+  const [registrationNumber, setRegistrationNumber] = useState("");
+  const [status, setStatus] = useState("Neutral");
+  const [carStatus, setCarStatus] = useState("Available");
 
   // Images States
   const [coverImage, setCoverImage] = useState("");
@@ -103,6 +106,9 @@ const EditCar = () => {
         setRegistrationCity(vehicle.registrationCity || "");
         setInsurance(vehicle.insurance || "Comprehensive");
         setDescription(vehicle.description || "");
+        setRegistrationNumber(vehicle.registrationNumber || "");
+        setStatus(vehicle.status || "Neutral");
+        setCarStatus(vehicle.carStatus || "Available");
         
         // Features checkbox mapping
         const activeFeatures = vehicle.features || [];
@@ -289,6 +295,9 @@ const EditCar = () => {
         gallery: finalGalleryUrls,
         video: finalVideoUrl,
         adminAdded: true,
+        registrationNumber: registrationNumber || "",
+        status: status || "Neutral",
+        carStatus: carStatus || "Available",
         updatedAt: serverTimestamp()
       };
 
@@ -549,6 +558,46 @@ const EditCar = () => {
                     className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
                   >
                     {insurances.map(i => <option key={i} value={i} className="bg-[#151518] text-white">{i}</option>)}
+                  </select>
+                </div>
+
+                {/* Registration Number */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">Registration Number</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. MH-12-PQ-1234"
+                    value={registrationNumber}
+                    onChange={(e) => setRegistrationNumber(e.target.value)}
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition"
+                  />
+                </div>
+
+                {/* Car Status (for Customers) */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">Car Status (Customer View) *</label>
+                  <select
+                    value={carStatus}
+                    onChange={(e) => setCarStatus(e.target.value)}
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
+                  >
+                    <option value="Available" className="bg-[#151518] text-white">Available</option>
+                    <option value="Booked" className="bg-[#151518] text-white">Booked</option>
+                    <option value="Sold" className="bg-[#151518] text-white">Sold</option>
+                  </select>
+                </div>
+
+                {/* Admin Status */}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">Admin Status (Manage Cars View) *</label>
+                  <select
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition cursor-pointer"
+                  >
+                    <option value="Neutral" className="bg-[#151518] text-white">Neutral</option>
+                    <option value="Processing" className="bg-[#151518] text-white">Processing</option>
+                    <option value="Transferred" className="bg-[#151518] text-white">Transferred</option>
                   </select>
                 </div>
 

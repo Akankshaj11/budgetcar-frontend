@@ -12,6 +12,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AddCar from "./pages/admin/AddCar";
 import ManageCars from "./pages/admin/ManageCars";
 import EditCar from "./pages/admin/EditCar";
+import CarProfile from "./pages/admin/CarProfile";
 import Enquiries from "./pages/admin/Enquiries";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfUse from "./pages/TermsOfUse";
@@ -40,6 +41,7 @@ const App = () => {
         <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         <Route path="/admin/add-car" element={<AdminRoute><AddCar /></AdminRoute>} />
         <Route path="/admin/manage-cars" element={<AdminRoute><ManageCars /></AdminRoute>} />
+        <Route path="/admin/car-profile/:id" element={<AdminRoute><CarProfile /></AdminRoute>} />
         <Route path="/admin/edit-car/:type/:id" element={<AdminRoute><EditCar /></AdminRoute>} />
         <Route path="/admin/enquiries" element={<AdminRoute><Enquiries /></AdminRoute>} />
       </Routes>

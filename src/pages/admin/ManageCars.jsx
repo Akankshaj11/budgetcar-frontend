@@ -1,10 +1,21 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaTrash, FaEdit, FaCar, FaTag, FaTimes, FaSearch } from "react-icons/fa";
+import { FaTrash, FaEdit, FaCar, FaTag, FaTimes, FaSearch, FaEye } from "react-icons/fa";
 import AdminSidebar from "../../components/AdminSidebar";
 import useCars from "../../hooks/useCars";
 import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+
+const getStatusBadge = (status) => {
+  const s = (status || "Neutral").toLowerCase();
+  if (s === "transferred") {
+    return <span className="text-[9px] font-bold text-green-400 bg-green-400/10 border border-green-400/20 px-2 py-0.5 rounded uppercase">Transferred</span>;
+  }
+  if (s === "processing") {
+    return <span className="text-[9px] font-bold text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded uppercase">Processing</span>;
+  }
+  return <span className="text-[9px] font-bold text-gray-400 bg-gray-400/10 border border-gray-400/20 px-2 py-0.5 rounded uppercase">Neutral</span>;
+};
 
 const ManageCars = () => {
   const navigate = useNavigate();
@@ -34,14 +45,16 @@ const ManageCars = () => {
     (car.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
     (car.brand || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
     (car.fuel || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (car.transmission || "").toLowerCase().includes(searchQuery.toLowerCase())
+    (car.transmission || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (car.registrationNumber || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const filteredDeals = dealsList.filter(deal => 
     (deal.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
     (deal.brand || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
     (deal.fuel || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (deal.transmission || "").toLowerCase().includes(searchQuery.toLowerCase())
+    (deal.transmission || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (deal.registrationNumber || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -97,27 +110,28 @@ const ManageCars = () => {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
+                <table className="w-full min-w-[850px] text-left text-xs border-collapse">
                   <thead>
                     <tr className="border-b border-white/5 text-gray-500 font-bold">
-                      <th className="pb-3 w-[40%]">Car Details</th>
+                      <th className="pb-3 w-[30%]">Car Details</th>
                       <th className="pb-3 w-[15%]">Price</th>
                       <th className="pb-3 w-[10%]">Year</th>
                       <th className="pb-3 w-[15%]">KMs</th>
                       <th className="pb-3 w-[10%]">Fuel/Trans</th>
+                      <th className="pb-3 w-[10%] text-center">Status</th>
                       <th className="pb-3 w-[10%] text-center">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     {loading ? (
                       <tr>
-                        <td colSpan="6" className="py-8 text-center text-gray-500">
+                        <td colSpan="7" className="py-8 text-center text-gray-500">
                           Loading regular cars...
                         </td>
                       </tr>
                     ) : filteredCars.length === 0 ? (
                       <tr>
-                        <td colSpan="6" className="py-8 text-center text-gray-500">
+                        <td colSpan="7" className="py-8 text-center text-gray-500">
                           {searchQuery ? "No matching regular cars found." : "No regular cars in inventory."}
                         </td>
                       </tr>
@@ -145,8 +159,18 @@ const ManageCars = () => {
                           <td className="py-4">{car.year}</td>
                           <td className="py-4">{car.kms}</td>
                           <td className="py-4">{car.fuel} • {car.transmission}</td>
+                          <td className="py-4 text-center">
+                            {getStatusBadge(car.status)}
+                          </td>
                           <td className="py-4">
                             <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => navigate(`/admin/car-profile/${car.id}`)}
+                                className="p-2 rounded-lg bg-white/5 text-gray-400 hover:text-white transition duration-300 cursor-pointer"
+                                title="View Car Profile"
+                              >
+                                <FaEye size={12} />
+                              </button>
                               <button
                                 onClick={() => navigate(`/admin/edit-car/car/${car.id}`)}
                                 className="p-2 rounded-lg bg-white/5 text-gray-400 hover:text-white transition duration-300 cursor-pointer"
@@ -181,28 +205,29 @@ const ManageCars = () => {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
+                <table className="w-full min-w-[850px] text-left text-xs border-collapse">
                   <thead>
                     <tr className="border-b border-white/5 text-gray-500 font-bold">
-                      <th className="pb-3 w-[35%]">Car Details</th>
+                      <th className="pb-3 w-[30%]">Car Details</th>
                       <th className="pb-3 w-[15%]">Price</th>
                       <th className="pb-3 w-[10%]">Discount</th>
                       <th className="pb-3 w-[10%]">Year</th>
                       <th className="pb-3 w-[10%]">KMs</th>
                       <th className="pb-3 w-[10%]">Fuel/Trans</th>
+                      <th className="pb-3 w-[10%] text-center">Status</th>
                       <th className="pb-3 w-[10%] text-center">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     {loading ? (
                       <tr>
-                        <td colSpan="7" className="py-8 text-center text-gray-500">
+                        <td colSpan="8" className="py-8 text-center text-gray-500">
                           Loading active deals...
                         </td>
                       </tr>
                     ) : filteredDeals.length === 0 ? (
                       <tr>
-                        <td colSpan="7" className="py-8 text-center text-gray-500">
+                        <td colSpan="8" className="py-8 text-center text-gray-500">
                           {searchQuery ? "No matching deals found." : "No active deals."}
                         </td>
                       </tr>
@@ -233,8 +258,18 @@ const ManageCars = () => {
                           <td className="py-4">{deal.year}</td>
                           <td className="py-4">{deal.kms}</td>
                           <td className="py-4">{deal.fuel} • {deal.transmission}</td>
+                          <td className="py-4 text-center">
+                            {getStatusBadge(deal.status)}
+                          </td>
                           <td className="py-4">
                             <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => navigate(`/admin/car-profile/${deal.id}`)}
+                                className="p-2 rounded-lg bg-white/5 text-gray-400 hover:text-white transition duration-300 cursor-pointer"
+                                title="View Car Profile"
+                              >
+                                <FaEye size={12} />
+                              </button>
                               <button
                                 onClick={() => navigate(`/admin/edit-car/deal/${deal.id}`)}
                                 className="p-2 rounded-lg bg-white/5 text-gray-400 hover:text-white transition duration-300 cursor-pointer"
