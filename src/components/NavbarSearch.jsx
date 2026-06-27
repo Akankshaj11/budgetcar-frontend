@@ -30,17 +30,11 @@ const NavbarSearch = ({ searchQuery, setSearchQuery, hideLinks = false }) => {
             
             {/* Left: Logo & Name */}
             <div onClick={() => navigate("/")} className="flex items-center gap-2.5 cursor-pointer shrink-0">
-              <div className="w-9 h-9 rounded-lg bg-gray-900 text-white flex items-center justify-center">
-                <FaCarSide size={16} />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold leading-none text-gray-900">
-                  BudgetCarHub
-                </h2>
-                <p className="uppercase text-[9px] tracking-[1.5px] text-gray-500 font-semibold mt-0.5">
-                  Trusted Cars
-                </p>
-              </div>
+              <img 
+                src="/budgetcarlogo.png" 
+                alt="BudgetCarHub Logo" 
+                className="h-22.5 md:h-25 w-auto object-contain relative brightness-0" 
+              />
             </div>
 
             {/* Middle: Search Field (Desktop) */}

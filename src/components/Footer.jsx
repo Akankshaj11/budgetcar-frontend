@@ -42,7 +42,7 @@ const Footer = () => {
 
     const handleBrandClick = (brand) => {
         const brandMap = {
-            "Maruti Suzuki": "Maruti Suzuki",
+            "Suzuki": "Suzuki",
             "Hyundai": "Hyundai",
             "Honda": "Honda",
             "Tata Motors": "Tata",
@@ -61,13 +61,11 @@ const Footer = () => {
                 {/* Brand Column */}
                 <div>
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center">
-                            <span className="text-white">🚗</span>
-                        </div>
-                        <div>
-                            <h2 className="text-white font-bold text-lg">BudgetCarHub</h2>
-                            <p className="text-[10px] uppercase tracking-widest text-gray-500">TRUSTED CARS</p>
-                        </div>
+                        <img 
+                            src="/budgetcarlogo.png" 
+                            alt="BudgetCarHub Logo" 
+                            className="h-[100px] w-auto object-contain brightness-0 invert" 
+                        />
                     </div>
                     <p className="text-sm mb-8 leading-relaxed">
                         Pune's most trusted second-hand car dealership since 2012. BudgetCarHub makes buying and selling easy.
@@ -106,7 +104,7 @@ const Footer = () => {
                 <div>
                     <h3 className="text-white font-bold mb-6">POPULAR BRANDS</h3>
                     <ul className="space-y-4 text-md">
-                        {["Maruti Suzuki", "Hyundai", "Honda", "Tata Motors", "Toyota", "Mahindra", "Kia"].map(brand => (
+                        {["Suzuki", "Hyundai", "Honda", "Tata Motors", "Toyota", "Mahindra", "Kia", "Audi", "Mercedes", "BMW", "Jaguar"].map(brand => (
                             <li key={brand}>
                                 <button 
                                     onClick={() => handleBrandClick(brand)} 

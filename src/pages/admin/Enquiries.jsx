@@ -11,7 +11,7 @@ const defaultEnquiries = [
     name: "Rohan Sharma",
     phone: "+91 98765 43210",
     email: "rohan.sharma@gmail.com",
-    message: "Hi, I am interested in purchasing the Maruti Suzuki Swift VXi listed for ₹4.85 Lakh. Please share availability and finance options.",
+    message: "Hi, I am interested in purchasing the Suzuki Swift VXi listed for ₹4.85 Lakh. Please share availability and finance options.",
     type: "buy",
     date: "24/06/2026, 05:15:30 pm"
   },

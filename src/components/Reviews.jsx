@@ -13,7 +13,7 @@ const reviews = [
         location: "Pune",
         review: "I had purchased a wagonr car from a BudgetCarHub. My family and I are very happy. We got a nice car, Amit sir is really trusted person\nWe are very thankful to Amit Sir and Ajay sir, he gave us a nice car, thanks all Bujet car team",
         rating: 5,
-        car: "Maruti Suzuki WagonR",
+        car: "Suzuki WagonR",
     },
     {
         id: 2,

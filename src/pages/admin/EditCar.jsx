@@ -69,7 +69,7 @@ const EditCar = () => {
 
         // Set state fields
         setCarName(vehicle.name || "");
-        setBrand(vehicle.brand || "Maruti Suzuki");
+        setBrand(vehicle.brand || "Suzuki");
         
         if (vehicle.model) {
           setModel(vehicle.model);
@@ -331,8 +331,9 @@ const EditCar = () => {
   };
 
   const brands = [
-    "Maruti Suzuki", "Hyundai", "Tata", "Mahindra", "Toyota", 
-    "Honda", "Kia", "Volkswagen", "Skoda", "Renault", "Ford", "MG"
+    "Suzuki", "Hyundai", "Tata", "Mahindra", "Toyota", 
+    "Honda", "Kia", "Volkswagen", "Skoda", "Renault", "Ford", "MG",
+    "BMW", "Mercedes-Benz", "Audi", "Jaguar"
   ];
 
   const fuelTypes = ["Petrol", "Diesel", "CNG", "Electric", "Hybrid"];
@@ -383,7 +384,7 @@ const EditCar = () => {
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">Car Name *</label>
                   <input
                     type="text"
-                    placeholder="e.g. Maruti Suzuki Swift VXi"
+                    placeholder="e.g. Suzuki Swift VXi"
                     value={carName}
                     onChange={(e) => setCarName(e.target.value)}
                     className="w-full px-4 py-3 text-xs bg-white/2 border border-white/6 rounded-xl text-white outline-none focus:border-white/20 transition"

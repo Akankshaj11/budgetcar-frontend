@@ -19,8 +19,9 @@ import HeroCarousel from "../components/HeroCarousel";
 const brandLogos = [
     "/logos/tata.svg", "/logos/toyota.svg", "/logos/mahindra.svg", 
     "/logos/kia.svg", "/logos/hyundai.svg", "/logos/skoda.svg", 
-    "/logos/marutisuzuki.svg", "/logos/honda.svg", "/logos/ford.svg",
-    "/logos/mg.svg", "/logos/renault.svg", "/logos/volkswagen.svg"
+    "/logos/suzuki.svg", "/logos/honda.svg", "/logos/ford.svg",
+    "/logos/mg.svg", "/logos/renault.svg", "/logos/volkswagen.svg",
+    "/logos/audi.svg", "/logos/mercedes.svg", "/logos/bmw.svg"
 ];
 
 const Home = () => {

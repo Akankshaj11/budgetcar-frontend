@@ -60,14 +60,12 @@ const AdminSidebar = ({ activeTab }) => {
       }`}>
         <div>
           {/* Logo / Header */}
-          <div className="p-6 border-b border-white/5 flex items-center gap-3 pl-16 md:pl-6">
-            <div className="w-9 h-9 rounded-lg bg-white text-gray-955 flex items-center justify-center shadow-lg">
-              <FaCarSide size={16} />
-            </div>
-            <div>
-              <h2 className="text-md font-bold text-white leading-none">BudgetCarHub</h2>
-              <span className="text-[9px] uppercase font-bold text-gray-500 tracking-[1.5px] mt-1 block">Admin Control</span>
-            </div>
+          <div className="p-6 border-b border-white/5 flex items-center pl-16 md:pl-6">
+            <img 
+              src="/budgetcarlogo.png" 
+              alt="BudgetCarHub Logo" 
+              className="h-16 w-auto object-contain brightness-0 invert" 
+            />
           </div>
 
           {/* Navigation Links */}

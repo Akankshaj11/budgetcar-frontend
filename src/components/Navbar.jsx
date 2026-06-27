@@ -80,39 +80,21 @@ const Navbar = () => {
         }`}
       >
         <div className="max-w-7xl mx-auto px-8">
-          <div className="h-18 flex items-center justify-between">
+          <div className="h-20 flex items-center justify-between">
 
             {/* Logo */}
 
-            <div className="flex items-center gap-3 cursor-pointer">
-
-              <div
-                className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
-                  isSolid
-                    ? "bg-gray-900 text-white"
-                    : "bg-white/20 backdrop-blur-md border border-white/20 text-white"
+            <div 
+              className="flex items-center gap-3 cursor-pointer shrink-0"
+              onClick={() => handleLinkClick("Home")}
+            >
+              <img 
+                src="/budgetcarlogo.png" 
+                alt="BudgetCarHub Logo" 
+                className={`h-22.5 md:h-25 w-auto object-contain relative transition-all duration-300 ${
+                  isSolid ? "brightness-0" : "brightness-0 invert"
                 }`}
-              >
-                <FaCarSide size={18} />
-              </div>
-
-              <div>
-                <h2
-                  className={`text-2xl font-semibold leading-none transition-colors duration-300 ${
-                    isSolid ? "text-gray-900" : "text-white"
-                  }`}
-                >
-                  BudgetCarHub
-                </h2>
-
-                <p
-                  className={`uppercase text-[11px] tracking-[2px] transition-colors duration-300 ${
-                    isSolid ? "text-gray-600" : "text-gray-300"
-                  }`}
-                >
-                  Trusted Cars
-                </p>
-              </div>
+              />
             </div>
 
             {/* Desktop Links */}

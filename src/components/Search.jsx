@@ -4,7 +4,7 @@ import { FaSearch } from "react-icons/fa";
 
 const brands = [
   "Any Brand",
-  "Maruti Suzuki",
+  "Suzuki",
   "Hyundai",
   "Tata",
   "Mahindra",
@@ -21,6 +21,7 @@ const brands = [
   "BMW",
   "Mercedes-Benz",
   "Audi",
+  "Jaguar",
 ];
 
 const budgets = [

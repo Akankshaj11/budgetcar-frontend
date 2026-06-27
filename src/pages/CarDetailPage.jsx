@@ -4,7 +4,8 @@ import Footer from "../components/Footer";
 import {
   FaWhatsapp, FaCheck, FaStar,
   FaUserCircle, FaChevronLeft, FaChevronRight,
-  FaArrowLeft
+  FaArrowLeft, FaFacebook, FaTwitter,
+  FaEnvelope, FaCopy, FaShareAlt, FaTimes
 } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { doc, getDoc, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "firebase/firestore";
@@ -28,6 +29,38 @@ const CarDetailPage = () => {
   const [showAllFeatures, setShowAllFeatures] = useState(false);
   const [showAllSpecs, setShowAllSpecs] = useState(false);
   const [showCommentForm, setShowCommentForm] = useState(false);
+
+  // Gallery Carousel States
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [galleryIndex, setGalleryIndex] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  // Share Modal States
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const getItemsPerPage = () => {
+    if (windowWidth >= 768) return 3;
+    if (windowWidth >= 640) return 2;
+    return 1;
+  };
+
+  const itemsPerPage = getItemsPerPage();
+  const galleryList = car ? (car.gallery || car.galleryImages || []) : [];
+
+  const handlePrev = () => {
+    setGalleryIndex((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleNext = () => {
+    setGalleryIndex((prev) => Math.min(prev + 1, galleryList.length - itemsPerPage));
+  };
 
   // Scroll spy observer ref
   const observerRef = useRef(null);
@@ -199,18 +232,13 @@ const CarDetailPage = () => {
           {/* LEFT SECTION */}
           <div className="lg:col-span-2 space-y-8">
             
-            {/* Main Carousel / Cover Photo */}
-            <div className="relative bg-black rounded-2xl h-64 sm:h-96 overflow-hidden group shadow-md">
+            {/* Main Cover Photo */}
+            <div className="relative bg-black rounded-2xl h-64 sm:h-96 overflow-hidden shadow-md">
               <img
-                src={car.image || car.coverImage}
+                src={selectedImage || car.image || car.coverImage}
                 alt={car.name}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition">
-                <button className="bg-white/80 p-2 rounded-full"><FaChevronLeft /></button>
-                <button className="bg-white/80 p-2 rounded-full"><FaChevronRight /></button>
-              </div>
-              <div className="absolute bottom-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-xs font-bold">1 / 1</div>
             </div>
 
             {/* Section Navigation Tabs (Sticky) */}
@@ -320,34 +348,91 @@ const CarDetailPage = () => {
             {/* Gallery with Inline Video */}
             <section id="gallery" className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
               <h2 className="text-2xl font-extrabold mb-6 text-gray-900">Gallery</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {/* Inline Walk-around Video (First Grid Card) */}
-                {car.video && (
-                  <div className="h-32 w-full rounded-lg overflow-hidden bg-black border border-gray-200 relative group shadow-sm flex items-center justify-center">
-                    <video 
-                      src={car.video} 
-                      className="w-full h-full object-cover rounded-lg" 
-                      controls 
-                      playsInline 
-                      muted
-                    />
-                  </div>
-                )}
-                
-                {/* Photos Gallery */}
-                {(car.gallery || car.galleryImages || []).map((image, index) => (
-                  <img
-                    key={index}
-                    src={image}
-                    className="h-32 w-full object-cover rounded-lg hover:opacity-95 hover:scale-[1.02] duration-300 transition cursor-pointer border border-gray-100 shadow-sm"
-                    alt={`Car Angle ${index + 1}`}
+              
+              {/* Highlighted Walk-Around Video */}
+              {car.video && (
+                <div className="mb-6 max-w-xl mx-auto rounded-2xl overflow-hidden bg-black border border-gray-200 relative group shadow-md flex items-center justify-center h-64">
+                  <video 
+                    src={car.video} 
+                    className="w-full h-full object-cover" 
+                    controls 
+                    playsInline 
+                    muted
                   />
-                ))}
+                  <div className="absolute top-4 left-4 bg-black/60 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+                    Walk-Around Video
+                  </div>
+                </div>
+              )}
 
-                {(!car.video && !(car.gallery || car.galleryImages || []).length) && (
-                  <p className="col-span-full text-center text-sm text-gray-400 py-4">No gallery media uploaded yet.</p>
-                )}
-              </div>
+              {galleryList.length > 3 ? (
+                /* Carousel Layout */
+                <div className="relative group px-10">
+                  <div className="overflow-hidden rounded-xl">
+                    <div 
+                      className="flex transition-transform duration-500 ease-in-out"
+                      style={{ transform: `translateX(-${galleryIndex * (100 / itemsPerPage)}%)` }}
+                    >
+                      {galleryList.map((image, index) => (
+                        <div 
+                          key={index} 
+                          className="w-full sm:w-1/2 md:w-1/3 shrink-0 p-2"
+                        >
+                          <img
+                            src={image}
+                            className={`h-32 w-full object-cover rounded-xl hover:scale-[1.03] duration-300 transition cursor-pointer border shadow-xs ${
+                              (selectedImage || car.image || car.coverImage) === image ? "border-gray-900 ring-2 ring-gray-900/20" : "border-gray-100"
+                            }`}
+                            alt={`Car Angle ${index + 1}`}
+                            onClick={() => setSelectedImage(image)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Prev Button */}
+                  <button 
+                    onClick={handlePrev}
+                    disabled={galleryIndex === 0}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition duration-300 z-10 cursor-pointer text-gray-800"
+                  >
+                    <FaChevronLeft size={14} />
+                  </button>
+                  
+                  {/* Next Button */}
+                  <button 
+                    onClick={handleNext}
+                    disabled={galleryIndex >= galleryList.length - itemsPerPage}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white border border-gray-200 shadow-md flex items-center justify-center hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition duration-300 z-10 cursor-pointer text-gray-800"
+                  >
+                    <FaChevronRight size={14} />
+                  </button>
+                  
+                  {/* Pagination Indicator */}
+                  <div className="text-center text-xs text-gray-400 font-bold mt-4">
+                    Showing {galleryIndex + 1} - {Math.min(galleryIndex + itemsPerPage, galleryList.length)} of {galleryList.length} Photos
+                  </div>
+                </div>
+              ) : (
+                /* Standard Grid Layout */
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {galleryList.map((image, index) => (
+                    <img
+                      key={index}
+                      src={image}
+                      className={`h-32 w-full object-cover rounded-lg hover:opacity-95 hover:scale-[1.02] duration-300 transition cursor-pointer border shadow-sm ${
+                        (selectedImage || car.image || car.coverImage) === image ? "border-gray-900 ring-2 ring-gray-900/20" : "border-gray-100"
+                      }`}
+                      alt={`Car Angle ${index + 1}`}
+                      onClick={() => setSelectedImage(image)}
+                    />
+                  ))}
+                  {galleryList.length === 0 && (
+                    <p className="col-span-full text-center text-sm text-gray-400 py-4">No gallery photos uploaded yet.</p>
+                  )}
+                </div>
+              )}
             </section>
 
             {/* Reviews Section */}
@@ -497,29 +582,157 @@ const CarDetailPage = () => {
 
               {!car.isDiscount && <div className="mb-6"></div>}
 
-              {/* Side-by-side CTA Buttons Row */}
-              <div className="flex gap-3 mb-2">
+              {/* CTA Buttons Grid */}
+              <div className="space-y-3 mb-2">
+                {/* Row 1: Make Your Offer (Full Width) */}
                 <a 
                   href="tel:+919922801959" 
-                  className="flex-1 bg-gray-900 text-white py-3 rounded-xl font-bold hover:bg-gray-955 transition flex items-center justify-center text-xs md:text-sm text-center shadow-md shadow-gray-900/10 cursor-pointer"
+                  className="w-full bg-gray-900 text-white py-3 rounded-xl font-bold hover:bg-gray-955 transition flex items-center justify-center text-xs md:text-sm text-center shadow-md shadow-gray-900/10 cursor-pointer"
                 >
                   Make Your Offer
                 </a>
-                <a 
-                  href={`https://wa.me/919922801959?text=Hi, I am interested in the ${car.brand || ""} ${car.name || ""} (${car.year || ""}) listed on BudgetCarHub.`} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="flex-1 border border-gray-250 py-3 rounded-xl flex items-center justify-center gap-1.5 font-bold hover:bg-gray-50 transition text-xs md:text-sm text-gray-700 cursor-pointer"
-                >
-                  <FaWhatsapp className="text-gray-750 text-base" /> 
-                  WhatsApp
-                </a>
+
+                {/* Row 2: WhatsApp & Share (Side-by-side) */}
+                <div className="flex gap-3">
+                  <a 
+                    href={`https://wa.me/919922801959?text=Hi, I am interested in the ${car.brand || ""} ${car.name || ""} (${car.year || ""}) listed on BudgetCarHub.`} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="flex-1 border border-gray-250 py-3 rounded-xl flex items-center justify-center gap-1.5 font-bold hover:bg-gray-50 transition text-xs md:text-sm text-gray-700 cursor-pointer"
+                  >
+                    <FaWhatsapp className="text-green-600 text-base" /> 
+                    WhatsApp
+                  </a>
+                  <button 
+                    onClick={() => setShowShareModal(true)}
+                    className="flex-1 border border-gray-250 py-3 rounded-xl flex items-center justify-center gap-1.5 font-bold hover:bg-gray-50 transition text-xs md:text-sm text-gray-700 cursor-pointer"
+                  >
+                    <FaShareAlt className="text-blue-600 text-base" /> 
+                    Share
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
       <Footer />
+
+      {/* Share Modal */}
+      {showShareModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-70 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-gray-100 relative animate-in fade-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => {
+                setShowShareModal(false);
+                setCopied(false);
+              }}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 cursor-pointer"
+            >
+              <FaTimes size={18} />
+            </button>
+            
+            <h3 className="text-lg font-extrabold text-gray-900 mb-2">Share this Car</h3>
+            <p className="text-xs text-gray-500 mb-4 font-medium">Share the details of {car.name} with others.</p>
+            
+            {/* Social Share Icons Grid */}
+            <div className="grid grid-cols-5 gap-2 mb-6">
+              {/* WhatsApp */}
+              <a 
+                href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Check out this ${car.name} on BudgetCarHub: ${window.location.href}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center gap-1 group text-center"
+              >
+                <div className="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center group-hover:bg-green-100 transition duration-300">
+                  <FaWhatsapp size={18} />
+                </div>
+                <span className="text-[9px] font-bold text-gray-500">WhatsApp</span>
+              </a>
+
+              {/* Facebook */}
+              <a 
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center gap-1 group text-center"
+              >
+                <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-100 transition duration-300">
+                  <FaFacebook size={16} />
+                </div>
+                <span className="text-[9px] font-bold text-gray-500">Facebook</span>
+              </a>
+
+              {/* X */}
+              <a 
+                href={`https://x.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`Check out this certified pre-owned ${car.name} on BudgetCarHub!`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center gap-1 group text-center"
+              >
+                <div className="w-10 h-10 rounded-full bg-gray-900 text-white flex items-center justify-center hover:bg-black transition duration-300">
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </div>
+                <span className="text-[9px] font-bold text-gray-500">X</span>
+              </a>
+
+              {/* Twitter */}
+              <a 
+                href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(`Check out this certified pre-owned ${car.name} on BudgetCarHub!`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center gap-1 group text-center"
+              >
+                <div className="w-10 h-10 rounded-full bg-[#e8f5fe] text-[#1DA1F2] flex items-center justify-center group-hover:bg-[#d4edfe] transition duration-300">
+                  <FaTwitter size={16} />
+                </div>
+                <span className="text-[9px] font-bold text-gray-500">Twitter</span>
+              </a>
+
+              {/* Email */}
+              <a 
+                href={`mailto:?subject=${encodeURIComponent(`Certified Pre-Owned ${car.name} at BudgetCarHub`)}&body=${encodeURIComponent(`Hi,\n\nI found this certified pre-owned ${car.name} on BudgetCarHub and wanted to share it with you.\n\nLink: ${window.location.href}`)}`}
+                className="flex flex-col items-center gap-1 group text-center"
+              >
+                <div className="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center group-hover:bg-red-100 transition duration-300">
+                  <FaEnvelope size={16} />
+                </div>
+                <span className="text-[9px] font-bold text-gray-500">Email</span>
+              </a>
+            </div>
+            
+            {/* Copy Link Input Section */}
+            <div className="relative flex items-center">
+              <input 
+                type="text" 
+                readOnly 
+                value={window.location.href}
+                className="w-full text-xs border border-gray-200 rounded-xl pl-3 pr-20 py-2.5 outline-none bg-gray-50 text-gray-500 select-all"
+              />
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                className="absolute right-1.5 bg-gray-900 hover:bg-black text-white text-[10px] font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer"
+              >
+                {copied ? (
+                  <>
+                    <FaCheck size={10} className="text-green-400" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <FaCopy size={10} />
+                    Copy
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

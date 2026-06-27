@@ -22,7 +22,7 @@ const AllDeals = () => {
 
     // Filter categories arrays
     const displayBrands = [
-        { display: "Maruti Suzuki", dbValue: "Maruti Suzuki" },
+        { display: "Suzuki", dbValue: "Suzuki" },
         { display: "Hyundai", dbValue: "Hyundai" },
         { display: "Tata Motors", dbValue: "Tata" },
         { display: "Honda", dbValue: "Honda" },
@@ -38,7 +38,8 @@ const AllDeals = () => {
         { display: "Jeep", dbValue: "Jeep" },
         { display: "BMW", dbValue: "BMW" },
         { display: "Mercedes-Benz", dbValue: "Mercedes-Benz" },
-        { display: "Audi", dbValue: "Audi" }
+        { display: "Audi", dbValue: "Audi" },
+        { display: "Jaguar", dbValue: "Jaguar" }
     ];
 
     const fuelTypes = [
