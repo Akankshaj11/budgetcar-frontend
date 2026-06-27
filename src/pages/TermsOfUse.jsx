@@ -1,5 +1,7 @@
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useMemo } from "react";
+import SEO from "../components/SEO";
 import Navbar from "../components/Navbar";
+import { getBreadcrumbJsonLd, getSiteUrl, PAGE_SEO } from "../config/seo";
 import Footer from "../components/Footer";
 
 const TermsOfUse = () => {
@@ -7,7 +9,26 @@ const TermsOfUse = () => {
         window.scrollTo(0, 0);
     }, []);
 
+    const jsonLd = useMemo(() => {
+        const siteUrl = getSiteUrl();
+        return {
+            "@context": "https://schema.org",
+            "@graph": [
+                getBreadcrumbJsonLd([
+                    { name: "Home", url: siteUrl },
+                    { name: "Terms of Use", url: `${siteUrl}/terms-of-use` },
+                ]),
+            ],
+        };
+    }, []);
+
     return (
+        <>
+        <SEO
+            title={PAGE_SEO.terms.title}
+            description={PAGE_SEO.terms.description}
+            jsonLd={jsonLd}
+        />
         <main className="min-h-screen bg-[#f6f7fb] text-gray-900 pt-28">
             <Navbar />
             
@@ -121,6 +142,7 @@ const TermsOfUse = () => {
 
             <Footer />
         </main>
+        </>
     );
 };
 

@@ -64,7 +64,7 @@ const Footer = () => {
                         <img 
                             src="/budgetcarlogo.png" 
                             alt="BudgetCarHub Logo" 
-                            className="h-[100px] w-auto object-contain brightness-0 invert" 
+                            className="h-10 sm:h-11 w-auto max-w-[150px] object-contain brightness-0 invert" 
                         />
                     </div>
                     <p className="text-sm mb-8 leading-relaxed">

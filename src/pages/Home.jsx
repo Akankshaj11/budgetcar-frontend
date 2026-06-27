@@ -1,8 +1,10 @@
 
 
 
-import React from "react";
+import React, { useMemo } from "react";
+import SEO from "../components/SEO";
 import Navbar from "../components/Navbar";
+import { getHomeJsonLd, getSiteUrl, PAGE_SEO } from "../config/seo";
 import Search from "../components/Search";
 import About from "../components/About";
 import BrowseBrands from "../components/BrowseBrands";
@@ -25,7 +27,16 @@ const brandLogos = [
 ];
 
 const Home = () => {
+    const jsonLd = useMemo(() => getHomeJsonLd(getSiteUrl()), []);
+
     return (
+        <>
+        <SEO
+            title={PAGE_SEO.home.title}
+            description={PAGE_SEO.home.description}
+            keywords={PAGE_SEO.home.keywords}
+            jsonLd={jsonLd}
+        />
         <main className="min-h-screen bg-[#111111]">
             {/* Hero Section */}
             <section className="relative h-screen overflow-hidden flex flex-col">
@@ -40,12 +51,12 @@ const Home = () => {
                         <div className="flex animate-marquee whitespace-nowrap">
                             <div className="flex items-center gap-16 px-8 shrink-0">
                                 {brandLogos.map((logo, index) => (
-                                    <img key={`set1-${index}`} src={logo} alt="Brand" className="h-6 w-auto opacity-60 grayscale invert" />
+                                    <img key={`set1-${index}`} src={logo} alt="Brand" className="h-6 w-auto max-w-16 object-contain opacity-60 grayscale invert" />
                                 ))}
                             </div>
                             <div className="flex items-center gap-16 px-8 shrink-0">
                                 {brandLogos.map((logo, index) => (
-                                    <img key={`set2-${index}`} src={logo} alt="Brand" className="h-6 w-auto opacity-60 grayscale invert" />
+                                    <img key={`set2-${index}`} src={logo} alt="Brand" className="h-6 w-auto max-w-16 object-contain opacity-60 grayscale invert" />
                                 ))}
                             </div>
                         </div>
@@ -65,6 +76,7 @@ const Home = () => {
             <Contact />
             <Footer />
         </main>
+        </>
     );
 };
 

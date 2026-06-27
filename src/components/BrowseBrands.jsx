@@ -71,7 +71,7 @@ const BrowseBrands = () => {
                 <img
                   src={brand.logo}
                   alt={brand.name}
-                  className="h-9 object-contain transition duration-300 group-hover:scale-110 grayscale contrast-150"
+                  className="h-9 max-w-full object-contain transition duration-300 group-hover:scale-110 grayscale contrast-150"
                 />
 
               </div>

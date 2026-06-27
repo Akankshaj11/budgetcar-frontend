@@ -91,7 +91,7 @@ const Navbar = () => {
               <img 
                 src="/budgetcarlogo.png" 
                 alt="BudgetCarHub Logo" 
-                className={`h-22.5 md:h-25 w-auto object-contain relative transition-all duration-300 ${
+                className={`h-9 sm:h-10 md:h-11 w-auto max-w-[120px] sm:max-w-[140px] md:max-w-[160px] object-contain transition-all duration-300 ${
                   isSolid ? "brightness-0" : "brightness-0 invert"
                 }`}
               />

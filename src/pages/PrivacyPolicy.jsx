@@ -1,5 +1,7 @@
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useMemo } from "react";
+import SEO from "../components/SEO";
 import Navbar from "../components/Navbar";
+import { getBreadcrumbJsonLd, getSiteUrl, PAGE_SEO } from "../config/seo";
 import Footer from "../components/Footer";
 
 const PrivacyPolicy = () => {
@@ -7,7 +9,26 @@ const PrivacyPolicy = () => {
         window.scrollTo(0, 0);
     }, []);
 
+    const jsonLd = useMemo(() => {
+        const siteUrl = getSiteUrl();
+        return {
+            "@context": "https://schema.org",
+            "@graph": [
+                getBreadcrumbJsonLd([
+                    { name: "Home", url: siteUrl },
+                    { name: "Privacy Policy", url: `${siteUrl}/privacy-policy` },
+                ]),
+            ],
+        };
+    }, []);
+
     return (
+        <>
+        <SEO
+            title={PAGE_SEO.privacy.title}
+            description={PAGE_SEO.privacy.description}
+            jsonLd={jsonLd}
+        />
         <main className="min-h-screen bg-[#f6f7fb] text-gray-900 pt-28">
             <Navbar />
             
@@ -120,6 +141,7 @@ const PrivacyPolicy = () => {
 
             <Footer />
         </main>
+        </>
     );
 };
 

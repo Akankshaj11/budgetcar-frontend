@@ -64,7 +64,7 @@ const AdminSidebar = ({ activeTab }) => {
             <img 
               src="/budgetcarlogo.png" 
               alt="BudgetCarHub Logo" 
-              className="h-16 w-auto object-contain brightness-0 invert" 
+              className="h-9 w-auto max-w-[130px] object-contain brightness-0 invert" 
             />
           </div>
 

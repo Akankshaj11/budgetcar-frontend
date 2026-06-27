@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import SEO from "../components/SEO";
+import { getBreadcrumbJsonLd, getSiteUrl, PAGE_SEO } from "../config/seo";
 import {
     FaCalendarAlt,
     FaGasPump,
@@ -543,8 +545,34 @@ const AllDeals = () => {
         );
     }
 
+    const jsonLd = useMemo(() => {
+        const siteUrl = getSiteUrl();
+        return {
+            "@context": "https://schema.org",
+            "@graph": [
+                getBreadcrumbJsonLd([
+                    { name: "Home", url: siteUrl },
+                    { name: "Deals", url: `${siteUrl}/all-deals` },
+                ]),
+                {
+                    "@type": "CollectionPage",
+                    name: PAGE_SEO.allDeals.title,
+                    description: PAGE_SEO.allDeals.description,
+                    url: `${siteUrl}/all-deals`,
+                    isPartOf: { "@id": `${siteUrl}/#website` },
+                },
+            ],
+        };
+    }, []);
+
     return (
         <>
+            <SEO
+                title={PAGE_SEO.allDeals.title}
+                description={PAGE_SEO.allDeals.description}
+                keywords={PAGE_SEO.allDeals.keywords}
+                jsonLd={jsonLd}
+            />
             <NavbarSearch searchQuery={searchQuery} setSearchQuery={setSearchQuery} hideLinks={true} />
             <section className="bg-[#f6f7fb] min-h-screen py-8 text-gray-900">
                 <div className="max-w-7xl mx-auto px-6">

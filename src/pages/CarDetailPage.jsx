@@ -1,5 +1,7 @@
-import React, { useEffect, useState, useLayoutEffect, useRef } from "react";
+import React, { useEffect, useState, useLayoutEffect, useRef, useMemo } from "react";
+import SEO from "../components/SEO";
 import Navbar from "../components/Navbar";
+import { getCarJsonLd, getCarPageMeta, getSiteUrl, PAGE_SEO } from "../config/seo";
 import Footer from "../components/Footer";
 import {
   FaWhatsapp, FaCheck, FaStar,
@@ -162,14 +164,23 @@ const CarDetailPage = () => {
     }
   };
 
+  const carMeta = useMemo(() => (car ? getCarPageMeta(car) : null), [car]);
+  const carJsonLd = useMemo(() => (car ? getCarJsonLd(car, getSiteUrl()) : null), [car]);
+
   if (loading || !car) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-gray-50">
-        <div className="animate-pulse flex flex-col items-center gap-4">
-          <div className="w-12 h-12 rounded-full border-4 border-gray-900 border-t-transparent animate-spin"></div>
-          <p className="text-gray-650 font-bold text-sm">Loading car details...</p>
+      <>
+        <SEO
+          title="Used Car Details"
+          description={PAGE_SEO.allCars.description}
+        />
+        <div className="min-h-screen flex justify-center items-center bg-gray-50">
+          <div className="animate-pulse flex flex-col items-center gap-4">
+            <div className="w-12 h-12 rounded-full border-4 border-gray-900 border-t-transparent animate-spin"></div>
+            <p className="text-gray-650 font-bold text-sm">Loading car details...</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -214,6 +225,14 @@ const CarDetailPage = () => {
   ].filter(s => s.v);
 
   return (
+    <>
+      <SEO
+        title={carMeta.title}
+        description={carMeta.description}
+        ogImage={carMeta.ogImage}
+        ogType="product"
+        jsonLd={carJsonLd}
+      />
     <main className="bg-gray-50 min-h-screen text-gray-900">
       <Navbar />
 
@@ -734,6 +753,7 @@ const CarDetailPage = () => {
         </div>
       )}
     </main>
+    </>
   );
 };
 
